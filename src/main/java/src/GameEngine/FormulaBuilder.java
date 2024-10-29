@@ -11,42 +11,31 @@ public class FormulaBuilder {
         this.formula = new ArrayList<>();
     }
 
-    /**
-     * @return the value of the formula
-     */
+    //Return the value of the formula
     public List<String> getFormula() {
         return this.formula;
     }
 
-    /**
-     * Set the formula
-     */
+    //Set the formula
     public void setFormula(List<String> formula) {
         this.formula = new ArrayList<>(formula);
     }
 
-    /**
-     * Add token to current formula
-     */
+    //Add token to current formula
     public void addToken(String token) {
         this.formula.add(token);
         return;
     }
 
-    /**
-     * Remove the last token from the formula
-     */
+    //Remove the last token from the formula
     public void removeToken() {
         if (this.formula.isEmpty()) {
             return;
         }
         this.formula.remove(this.formula.size() - 1);
     }
-    
-    /**
-     * Get the formula as a string.
-     * Add a space between each token and remove the last space if there is one.
-     */
+
+    //Get the formula as a string.
     public String getFormulaString() {
         StringBuilder result = new StringBuilder();
 
@@ -54,7 +43,6 @@ public class FormulaBuilder {
             result.append(token).append(" ");
         }
 
-        // Remove the last space 
         if (result.length() > 0) {
             result.setLength(result.length() - 1);
         }

@@ -1,5 +1,6 @@
 package src.GameEngine;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FormulaEvaluator {
@@ -14,7 +15,7 @@ public class FormulaEvaluator {
     // Method to evaluate the formula
     public void evaluate(List<String> formula) {
         this.errorOccurred = false;
-        this.currentFormula = formula;
+        this.currentFormula = new ArrayList<>(formula);
 
         if (this.currentFormula.isEmpty()) {
             this.result = 0;
