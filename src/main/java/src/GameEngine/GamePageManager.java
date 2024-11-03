@@ -2,9 +2,21 @@ package src.GameEngine;
 
 public class GamePageManager {
     private PageMemory pageMemory;
+    private NumberGenerator numberGenerator;
+    private String[] currentGameNumbers;
 
     public GamePageManager() {
         this.pageMemory = new PageMemory();
+        this.numberGenerator = new NumberGenerator();
+        this.currentGameNumbers = generateGameNumbers();
+    }
+
+    public String[] generateGameNumbers() {
+        return numberGenerator.generateValidNumbers();
+    }
+
+    public String[] getCurrentGameNumbers(){
+        return this.currentGameNumbers;
     }
 
     // Method to add a token to the current cell's formula
@@ -37,11 +49,12 @@ public class GamePageManager {
 
     // Method to reset the page memory
     public void reset() {
+        this.currentGameNumbers = generateGameNumbers();
         pageMemory = new PageMemory();
     }
 
     // Method to get the page memory as a JSON string
-    public String pageToJSON() {
+    public String pageToJSON() {    
         return pageMemory.pageToJSON();
     }
     
@@ -55,5 +68,19 @@ public class GamePageManager {
         reset();
         updatePageFromJSON(json);
         return pageMemory;
+    }
+
+    // Method to get the game numbers as a JSON string
+    public String numbersToJSON() {
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{\"gameNumbers\":[");
+        for (int i = 0; i < currentGameNumbers.length; i++) {
+            jsonBuilder.append("\"").append(currentGameNumbers[i]).append("\"");
+            if (i < currentGameNumbers.length - 1) {
+                jsonBuilder.append(",");
+            }
+        }
+        jsonBuilder.append("]}");
+        return jsonBuilder.toString();
     }
 }

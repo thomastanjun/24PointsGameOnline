@@ -61,15 +61,13 @@ public class PageMemory {
         String[] parts = jsonString.replaceAll("[{}\"]", "").split(",");
         System.out.println(Arrays.toString(parts));
         for (String part : parts) {
-            //System.out.println(part);
             String[] keyValue = part.split(":");
-            //System.out.println(Arrays.toString(keyValue));
             String key = keyValue[0].trim();
             String value = keyValue[1].trim();
 
             switch (key) {
                 case "formula":
-                    value = value.replaceAll("[\\[\\]\"]", ""); // Remove square brackets and quotes
+                    value = value.replaceAll("[\\[\\]\"]", ""); 
                     List<String> newFormula = new ArrayList<>(Arrays.asList(value.split(",")));
                     currentCell.setFormula(newFormula);
                     break;

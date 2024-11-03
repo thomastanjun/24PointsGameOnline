@@ -23,6 +23,13 @@ public class FormulaEvaluator {
             return;
         }
 
+        // If the formula ends with an operator, report an error
+        String lastToken = this.currentFormula.get(this.currentFormula.size() - 1);
+        if (isOperator(lastToken)) {
+            this.errorMessage = "Incomplete formula";
+            return;  
+        }
+
         this.errorMessage = "";
         double resultValue = expression();
         this.result = resultValue;
@@ -92,7 +99,7 @@ public class FormulaEvaluator {
             this.errorMessage = "Empty parentheses";
             return result;
         }
-
+        
         // Get the first token in the formula
         String token = this.currentFormula.remove(0);
 
@@ -124,5 +131,11 @@ public class FormulaEvaluator {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    private boolean isOperator(String token) {
+        return token.equals("+") || token.equals("-") || 
+               token.equals("*") || token.equals("/") ||
+               token.equals("(") || token.equals(")");
     }
 }

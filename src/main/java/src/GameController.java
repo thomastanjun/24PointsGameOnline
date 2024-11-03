@@ -37,6 +37,13 @@ public class GameController {
         System.out.println("Backend sending: " + jsonResponse); // Debug log
         return ResponseEntity.ok(jsonResponse);
     }
+
+    @PutMapping("/newgame/{name}")
+    public ResponseEntity<String> startNewGame(@PathVariable String name) {
+        String newNumbersJson = gameService.startNewGame();
+        System.out.println("Backend sending: " + newNumbersJson); // Debug log
+        return ResponseEntity.ok(newNumbersJson);
+    }
     
     @GetMapping("/formula/string/{name}")
     public ResponseEntity<String> getFormulaString(@PathVariable String name) {
@@ -50,4 +57,16 @@ public class GameController {
         return ResponseEntity.ok(result);
     }
     
+    @GetMapping("/numbers/{name}")
+    public ResponseEntity<String> getGameNumbers(@PathVariable String name) {
+        String numbersJson = gameService.getGameNumbers();
+        return ResponseEntity.ok(numbersJson);
+    }
+
+    @GetMapping("/state/{name}")
+    public ResponseEntity<String> getGameState(@PathVariable String name) {
+        String gameState = gameService.getGameState();
+        return ResponseEntity.ok(gameState);
+}
+            
 }

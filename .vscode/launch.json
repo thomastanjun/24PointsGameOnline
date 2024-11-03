@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "test",
+            "request": "launch",
+            "mainClass": "src.GameEngine.test",
+            "projectName": "game-24points"
+        },
+        {
+            "type": "java",
+            "name": "Game24PointsApplication",
+            "request": "launch",
+            "mainClass": "GameApplication",
+            "projectName": "game-24points"
+        },
+        {
+            "type": "java",
+            "name": "Launch Game24PointsApplication",
+            "request": "launch",
+            "mainClass": "src.GameApplication",
+            "projectName": "game-24points",
+            "sourcePaths": [
+                "src/main/java"
+            ]
+        }
+    ]
+}

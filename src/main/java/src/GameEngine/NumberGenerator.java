@@ -14,6 +14,7 @@ public class NumberGenerator {
         this.evaluator = new FormulaEvaluator();
     }
 
+    // Method to generate a set of 4 numbers that can be combined to make 24
     public String[] generateValidNumbers() {
         String[] numbers;
         do {
@@ -23,6 +24,7 @@ public class NumberGenerator {
         return numbers;
     }
 
+    // Method to generate 4 random numbers
     private String[] generateFourNumbers() {
         String[] numbers = new String[4];
         for (int i = 0; i < 4; i++) {
@@ -31,6 +33,7 @@ public class NumberGenerator {
         return numbers;
     }
 
+    // Method to check if the given numbers can be combined to make 24
     private boolean canMake24(String[] numbers) {
         List<String[]> permutations = generatePermutations(numbers);
         String[] operators = {"+", "-", "*", "/"};
@@ -40,6 +43,7 @@ public class NumberGenerator {
                 for (String pattern : generateParenPatterns()) {
                     FormulaBuilder formula = buildFormula(perm, ops, pattern);
                     evaluator.evaluate(formula.getFormula());
+                    System.out.println("Formula: " + formula.getFormula() + " Result: " + evaluator.getResult()); // Debug log
                     if (Math.abs(evaluator.getResult() - 24.0) < 0.0001) {
                         return true;
                     }
@@ -48,7 +52,8 @@ public class NumberGenerator {
         }
         return false;
     }
-    
+
+    // Method to generate all possible operator combinations
     private List<String[]> generateOperators(String[] operators) {
         List<String[]> result = new ArrayList<>();
         for (String op1 : operators) {
@@ -61,22 +66,25 @@ public class NumberGenerator {
         return result;
     }
 
+    // Method to generate all possible parenthese patterns
     private List<String> generateParenPatterns() {
         List<String> patterns = new ArrayList<>();
-        patterns.add("(N O N) O (N O N)");  
-        patterns.add("((N O N) O N) O N");  
-        patterns.add("(N O (N O N)) O N");  
-        patterns.add("N O ((N O N) O N)");  
-        patterns.add("N O (N O (N O N))");  
+        patterns.add("( N O N ) O ( N O N )");  
+        patterns.add("( ( N O N ) O N ) O N");  
+        patterns.add("( N O ( N O N ) ) O N");  
+        patterns.add("N O ( ( N O N ) O N)");  
+        patterns.add("N O ( N O ( N O N ) )");  
         return patterns;
     }
 
+    // Method to generate all possible permutations of the given array
     private List<String[]> generatePermutations(String[] arr) {
         List<String[]> result = new ArrayList<>();
         permuteHelper(arr, 0, result);
         return result;
     }
 
+    // Helper method for generating permutations
     private void permuteHelper(String[] arr, int index, List<String[]> result) {
         if (index == arr.length) {
             result.add(arr.clone());
@@ -96,6 +104,7 @@ public class NumberGenerator {
         }
     }
 
+    // Method to build a formula from the given numbers, operators and parenthese
     private FormulaBuilder buildFormula(String[] numbers, String[] operators, String pattern) {
         FormulaBuilder formula = new FormulaBuilder();
         

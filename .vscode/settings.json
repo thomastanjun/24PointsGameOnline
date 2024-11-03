@@ -1,0 +1,9 @@
+{
+    "java.project.sourcePaths": [
+        "src/main/java/src"
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic",  
+    "java.project.referencedLibraries": [],
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.dependency.packagePresentation": "hierarchical"
+}

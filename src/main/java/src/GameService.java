@@ -27,11 +27,26 @@ public class GameService {
         return gameManager.pageToJSON();
     }
 
+    // Start new game will reset the PageMemory and generate new numbers
+    public String startNewGame() {
+        gameManager.reset();
+        return gameManager.numbersToJSON();
+    }
+
     public String getFormulaString() {
         return gameManager.getFormulaString();
     }
 
+    public String getGameNumbers() {
+        return gameManager.numbersToJSON();
+    }
+
     public String getResultString() {
         return gameManager.getResultString();
+    }
+
+    // Return the current state of the game
+    public String getGameState() {
+        return gameManager.pageToJSON();
     }
 }
