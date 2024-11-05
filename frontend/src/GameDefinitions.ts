@@ -1,6 +1,10 @@
 export interface GameState {
-    formula: string;
-    value: number;
-    error: string;
-    gameNumbers: string[];
+    [playerName: string]: CellState;
 }
+
+interface CellState {
+    formula: string;
+    value: string;  
+    error: string;
+}
+

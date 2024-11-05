@@ -1,24 +1,38 @@
-
 import { GameState } from '../GameDefinitions';
 
 class GameClient {
     private _baseURL: string;
     private _gameState: GameState;
+    private _playerName: string; 
+    private _gameNumbers: string[];
 
-    constructor() {
+    constructor(playerName: string) {
         this._baseURL = 'http://localhost:8080/game';
-        this._gameState = {
-            formula: '',
-            value: 0,
-            error: '',
-            gameNumbers: []
-        };
+        this._gameState = {};
+        this._playerName = playerName;
+        this._gameNumbers = [];
     }
 
     // Core game operations
+    public async joinGame(): Promise<void> {
+        try {
+            const response = await fetch(`${this._baseURL}/player/${this._playerName}`, {
+                method: 'PUT'
+            });
+            if (!response.ok) {
+                throw new Error('Failed to join game');
+            }
+            const data = await response.json();
+            this._updateGameState(data);
+        } catch (error) {
+            console.error('Error joining game:', error);
+            throw error;
+        }
+    }
+
     public async addToken(token: string): Promise<void> {
         try {
-            const response = await fetch(`${this._baseURL}/add/token/game1`, {
+            const response = await fetch(`${this._baseURL}/add/token/${this._playerName}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'text/plain'
@@ -35,7 +49,7 @@ class GameClient {
 
     public async removeToken(): Promise<void> {
         try {
-            const response = await fetch(`${this._baseURL}/remove/token/game1`, {
+            const response = await fetch(`${this._baseURL}/remove/token/${this._playerName}`, {
                 method: 'PUT'
             });
             const data = await response.json();
@@ -48,7 +62,7 @@ class GameClient {
 
     public async clearFormula(): Promise<void> {
         try {
-            const response = await fetch(`${this._baseURL}/clear/formula/game1`, {
+            const response = await fetch(`${this._baseURL}/clear/formula/${this._playerName}`, {
                 method: 'PUT'
             });
             const data = await response.json();
@@ -64,7 +78,7 @@ class GameClient {
         try {
             const response = await fetch(`${this._baseURL}/numbers/game1`);
             const data = await response.json();
-            this._updateGameNumbers(data);
+            this._gameNumbers = data.gameNumbers;
         } catch (error) {
             console.error('Error getting game numbers:', error);
             throw error;
@@ -78,7 +92,7 @@ class GameClient {
                 method: 'PUT'
             });
             const data = await response.json();
-            this._updateGameNumbers(data);
+            this._gameNumbers = data.gameNumbers;
         } catch (error) {
             console.error('Error starting new game:', error);
             throw error;
@@ -96,39 +110,24 @@ class GameClient {
         }
     }
 
-    // State getters
-    public getFormula(): string {
-        return this._gameState.formula;
+    public getCurrentPlayerFormula(): string {
+        return this._gameState[this._playerName]?.formula || '';
     }
 
-    public getResult(): number {
-        return this._gameState.value;
+    public getCurrentPlayerResult(): string {
+        return this._gameState[this._playerName]?.value || '0';
+    }
+
+    public getCurrentPlayerError(): string {
+        return this._gameState[this._playerName]?.value || '';
     }
 
     public getGameNumbersString(): string[] {
-        return this._gameState.gameNumbers;
-    }
-
-    public getError(): string {
-        return this._gameState.error;
+        return this._gameNumbers;
     }
 
     private _updateGameState(data: any): void {
-        this._gameState = {
-            formula: data.formula || '',
-            value: data.value || 0,
-            error: data.error || '',
-            gameNumbers: this._gameState.gameNumbers
-        };
-    }
-
-    private _updateGameNumbers(data: any): void {
-        if (data.gameNumbers) {
-            this._gameState = {
-                ...this._gameState,  
-                gameNumbers: data.gameNumbers
-            };
-        }
+        this._gameState = data;
     }
 
 }

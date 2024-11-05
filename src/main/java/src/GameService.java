@@ -12,18 +12,23 @@ public class GameService {
         this.gameManager = new GamePageManager();
     }
 
-    public String addToken(String token) {
-        gameManager.addToken(token);
+    public String addPlayer(String playerName) {
+        gameManager.addPlayer(playerName);
         return gameManager.pageToJSON();
     }
 
-    public String removeToken() {
-        gameManager.removeToken();
+    public String addToken(String token, String playerName) {
+        gameManager.addToken(token, playerName);
         return gameManager.pageToJSON();
     }
 
-    public String clearFormula() {
-        gameManager.clearFormula();
+    public String removeToken(String playerName) {
+        gameManager.removeToken(playerName);
+        return gameManager.pageToJSON();
+    }
+
+    public String clearFormula(String playerName) {
+        gameManager.clearFormula(playerName);
         return gameManager.pageToJSON();
     }
 
@@ -33,16 +38,8 @@ public class GameService {
         return gameManager.numbersToJSON();
     }
 
-    public String getFormulaString() {
-        return gameManager.getFormulaString();
-    }
-
     public String getGameNumbers() {
         return gameManager.numbersToJSON();
-    }
-
-    public String getResultString() {
-        return gameManager.getResultString();
     }
 
     // Return the current state of the game

@@ -19,32 +19,36 @@ public class GamePageManager {
         return this.currentGameNumbers;
     }
 
+    public void addPlayer(String playerName) {
+        pageMemory.addPlayer(playerName);
+    }
+
     // Method to add a token to the current cell's formula
-    public void addToken(String token) {
-        Cell cell = pageMemory.getCurrentCell();
+    public void addToken(String token, String playerName) {
+        Cell cell = pageMemory.getPlayerCell(playerName);
         cell.addToken(token);        
     }
 
     // Method to remove a token from the current cell's formula
-    public void removeToken() {
-        Cell cell = pageMemory.getCurrentCell();
+    public void removeToken(String playerName) {
+        Cell cell = pageMemory.getPlayerCell(playerName);
         cell.removeToken();  
     }
 
     // Method to clear the current cell's formula
-    public void clearFormula() {
-        Cell cell = pageMemory.getCurrentCell();
+    public void clearFormula(String playerName) {
+        Cell cell = pageMemory.getPlayerCell(playerName);
         cell.clear();
     }
 
     // Method to get the current cell's formula as a string
-    public String getFormulaString() {
-        return pageMemory.getCurrentCellFormulaString();
+    public String getFormulaString(String playerName) {
+        return pageMemory.getCellFormulaString(playerName);
     }
 
     // Method to get the current cell's result as a string
-    public String getResultString() {
-        return String.valueOf(pageMemory.getCurrentCellValue());
+    public String getResultString(String playerName) {
+        return String.valueOf(pageMemory.getCellValue(playerName));
     }
 
     // Method to reset the page memory

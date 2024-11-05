@@ -45,7 +45,7 @@ public class Cell {
         this.value = value;
     }
 
-    // Getter for the cell's formula
+    // Getter for the cell's formula builder object
     public FormulaBuilder getFormula() {
         return this.formula;
     }

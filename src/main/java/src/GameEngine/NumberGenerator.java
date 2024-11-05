@@ -72,7 +72,7 @@ public class NumberGenerator {
         patterns.add("( N O N ) O ( N O N )");  
         patterns.add("( ( N O N ) O N ) O N");  
         patterns.add("( N O ( N O N ) ) O N");  
-        patterns.add("N O ( ( N O N ) O N)");  
+        patterns.add("N O ( ( N O N ) O N )");  
         patterns.add("N O ( N O ( N O N ) )");  
         return patterns;
     }
