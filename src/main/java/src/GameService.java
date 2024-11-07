@@ -17,6 +17,10 @@ public class GameService {
         return gameManager.pageToJSON();
     }
 
+    public boolean isPlayerActive(String playerName) {
+        return gameManager.isPlayerActive(playerName);
+    }
+
     public String addToken(String token, String playerName) {
         gameManager.addToken(token, playerName);
         return gameManager.pageToJSON();

@@ -1,6 +1,7 @@
 package src;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +17,18 @@ public class GameController {
     }
 
     @PutMapping("/player/{name}")
-    public ResponseEntity<String> addPlayer(@PathVariable String name) {
-        String jsonResponse = gameService.addPlayer(name);  
-        System.out.println("Backend sending: " + jsonResponse); 
-        return ResponseEntity.ok(jsonResponse);
+    public ResponseEntity<?> addPlayer(@PathVariable String name) {
+        try {
+            if (gameService.isPlayerActive(name)) {
+                return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse("Player already active", "0001"));
+            }
+            String jsonResponse = gameService.addPlayer(name);  
+            return ResponseEntity.ok(jsonResponse);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     @PutMapping("/add/token/{name}")

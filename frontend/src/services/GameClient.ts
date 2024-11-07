@@ -1,5 +1,11 @@
 import { GameState } from '../GameDefinitions';
 
+interface ErrorResponse {
+    message: string;
+    code: string;
+    timestamp: number;
+}
+
 class GameClient {
     private _baseURL: string;
     private _gameState: GameState;
@@ -20,7 +26,8 @@ class GameClient {
                 method: 'PUT'
             });
             if (!response.ok) {
-                throw new Error('Failed to join game');
+                const errorData: ErrorResponse = await response.json();
+                throw new Error(errorData.message);
             }
             const data = await response.json();
             this._updateGameState(data);
@@ -54,6 +61,7 @@ class GameClient {
             });
             const data = await response.json();
             this._updateGameState(data);
+            console.log("reveived data after remove", this._gameState);
         } catch (error) {
             console.error('Error removing token:', error);
             throw error;
@@ -67,6 +75,7 @@ class GameClient {
             });
             const data = await response.json();
             this._updateGameState(data);
+            console.log("reveived data after clear", this._gameState);
         } catch (error) {
             console.error('Error clearing formula:', error);
             throw error;
@@ -78,6 +87,7 @@ class GameClient {
         try {
             const response = await fetch(`${this._baseURL}/numbers/game1`);
             const data = await response.json();
+            console.log("reveived numbers after fetch", data);
             this._gameNumbers = data.gameNumbers;
         } catch (error) {
             console.error('Error getting game numbers:', error);

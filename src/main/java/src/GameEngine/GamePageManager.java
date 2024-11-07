@@ -1,14 +1,19 @@
 package src.GameEngine;
 
+import java.util.Set;
+import java.util.HashSet;
+
 public class GamePageManager {
     private PageMemory pageMemory;
     private NumberGenerator numberGenerator;
     private String[] currentGameNumbers;
+    private Set<String> activePlayers;
 
     public GamePageManager() {
         this.pageMemory = new PageMemory();
         this.numberGenerator = new NumberGenerator();
         this.currentGameNumbers = generateGameNumbers();
+        this.activePlayers = new HashSet<>();
     }
 
     public String[] generateGameNumbers() {
@@ -20,7 +25,23 @@ public class GamePageManager {
     }
 
     public void addPlayer(String playerName) {
+        if (isPlayerActive(playerName)) {
+            throw new IllegalArgumentException("Player " + playerName + "already logged in");
+        }
         pageMemory.addPlayer(playerName);
+        activePlayers.add(playerName);
+    }
+
+    public void removePlayer(String playerName) {
+        if (!isPlayerActive(playerName)) {
+            throw new IllegalArgumentException("Player " + playerName + "does not exist");
+        }
+        pageMemory.removePlayer(playerName);
+        activePlayers.remove(playerName);
+    }
+
+    public boolean isPlayerActive(String playerName) {
+        return activePlayers.contains(playerName);
     }
 
     // Method to add a token to the current cell's formula
@@ -39,6 +60,15 @@ public class GamePageManager {
     public void clearFormula(String playerName) {
         Cell cell = pageMemory.getPlayerCell(playerName);
         cell.clear();
+    }
+
+    private boolean validateAnswer(String playerName) {
+        Cell cell = pageMemory.getPlayerCell(playerName);
+        double value = cell.getValue();
+        double target = 24;
+        double tolerance = 0.000001;
+
+        return Math.abs(value - target) < tolerance;
     }
 
     // Method to get the current cell's formula as a string

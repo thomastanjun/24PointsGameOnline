@@ -17,7 +17,18 @@ public class PageMemory {
 
     // Asign a cell for a new player
     public void addPlayer(String playerName) {
+        if (playerCells.containsKey(playerName)) {
+            throw new IllegalArgumentException("Player " + playerName + " already exists");
+        }
         playerCells.putIfAbsent(playerName, new Cell());
+    }
+
+    // Remove a player from the game page
+    public void removePlayer(String playerName) {
+        if (!playerCells.containsKey(playerName)) {
+            throw new IllegalArgumentException("Player " + playerName + " not found");
+        }
+        playerCells.remove(playerName);
     }
 
     // Get a player's cell
