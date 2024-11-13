@@ -1,19 +1,17 @@
 package src.GameEngine;
 
-import java.util.Set;
-import java.util.HashSet;
 
 public class GamePageManager {
     private PageMemory pageMemory;
+    private PlayerManager playerManager;
     private NumberGenerator numberGenerator;
     private String[] currentGameNumbers;
-    private Set<String> activePlayers;
 
-    public GamePageManager() {
+    public GamePageManager(PlayerManager playerManager) {
         this.pageMemory = new PageMemory();
+        this.playerManager = playerManager;
         this.numberGenerator = new NumberGenerator();
         this.currentGameNumbers = generateGameNumbers();
-        this.activePlayers = new HashSet<>();
     }
 
     public String[] generateGameNumbers() {
@@ -25,23 +23,23 @@ public class GamePageManager {
     }
 
     public void addPlayer(String playerName) {
-        if (isPlayerActive(playerName)) {
+        if (this.isPlayerActive(playerName)) {
             throw new IllegalArgumentException("Player " + playerName + "already logged in");
         }
-        pageMemory.addPlayer(playerName);
-        activePlayers.add(playerName);
+        this.playerManager.addPlayer(playerName);
+        this.pageMemory.addPlayer(playerName);
     }
 
     public void removePlayer(String playerName) {
-        if (!isPlayerActive(playerName)) {
+        if (!this.isPlayerActive(playerName)) {
             throw new IllegalArgumentException("Player " + playerName + "does not exist");
         }
-        pageMemory.removePlayer(playerName);
-        activePlayers.remove(playerName);
+        this.playerManager.removePlayer(playerName);
+        this.pageMemory.removePlayer(playerName);
     }
 
     public boolean isPlayerActive(String playerName) {
-        return activePlayers.contains(playerName);
+        return this.playerManager.isPlayerActive(playerName);
     }
 
     // Method to add a token to the current cell's formula

@@ -19,15 +19,24 @@ public class GameController {
     @PutMapping("/player/{name}")
     public ResponseEntity<?> addPlayer(@PathVariable String name) {
         try {
-            if (gameService.isPlayerActive(name)) {
-                return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body(new ErrorResponse("Player already active", "0001"));
-            }
             String jsonResponse = gameService.addPlayer(name);  
             return ResponseEntity.ok(jsonResponse);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse("Player already active", "0001"));
+        }
+    }
+
+    @DeleteMapping("/player/{name}")  
+    public ResponseEntity<?> removePlayer(@PathVariable String name) {
+        try {
+            String jsonResponce = gameService.removePlayer(name);
+            return ResponseEntity.ok(jsonResponce);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse("Player not found", "0002"));
         }
     }
 

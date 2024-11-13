@@ -3,13 +3,16 @@ package src;
 import org.springframework.stereotype.Service;
 
 import src.GameEngine.GamePageManager;
+import src.GameEngine.PlayerManager;
 
 @Service
 public class GameService {
     private final GamePageManager gameManager;
+    private final PlayerManager playerManager;
 
     public GameService() {
-        this.gameManager = new GamePageManager();
+        this.playerManager = new PlayerManager();
+        this.gameManager = new GamePageManager(this.playerManager);
     }
 
     public String addPlayer(String playerName) {
@@ -17,8 +20,13 @@ public class GameService {
         return gameManager.pageToJSON();
     }
 
+    public String removePlayer(String playerName) {
+        gameManager.removePlayer(playerName);
+        return gameManager.pageToJSON();
+    }
+
     public boolean isPlayerActive(String playerName) {
-        return gameManager.isPlayerActive(playerName);
+        return this.gameManager.isPlayerActive(playerName);
     }
 
     public String addToken(String token, String playerName) {
