@@ -1,17 +1,26 @@
 package src.GameEngine;
 
+import java.util.Map;
+import java.util.HashMap;
 
 public class GamePageManager {
     private PageMemory pageMemory;
     private PlayerManager playerManager;
     private NumberGenerator numberGenerator;
     private String[] currentGameNumbers;
+    private boolean gameState;
+    private String winnerFormula;
+    private String winner;
 
     public GamePageManager(PlayerManager playerManager) {
-        this.pageMemory = new PageMemory();
+        
         this.playerManager = playerManager;
         this.numberGenerator = new NumberGenerator();
         this.currentGameNumbers = generateGameNumbers();
+        this.gameState = false;
+        this.winnerFormula = "";
+        this.winner = "";
+        this.pageMemory = new PageMemory(this.currentGameNumbers);
     }
 
     public String[] generateGameNumbers() {
@@ -45,13 +54,15 @@ public class GamePageManager {
     // Method to add a token to the current cell's formula
     public void addToken(String token, String playerName) {
         Cell cell = pageMemory.getPlayerCell(playerName);
-        cell.addToken(token);        
+        cell.addToken(token);
+        validateAnswer(cell, playerName);        
     }
 
     // Method to remove a token from the current cell's formula
     public void removeToken(String playerName) {
         Cell cell = pageMemory.getPlayerCell(playerName);
-        cell.removeToken();  
+        cell.removeToken();
+        validateAnswer(cell, playerName);
     }
 
     // Method to clear the current cell's formula
@@ -60,13 +71,34 @@ public class GamePageManager {
         cell.clear();
     }
 
-    private boolean validateAnswer(String playerName) {
-        Cell cell = pageMemory.getPlayerCell(playerName);
+    private void validateAnswer(Cell cell, String playerName) {
         double value = cell.getValue();
-        double target = 24;
-        double tolerance = 0.000001;
+         
+        if (Math.abs(value - 24) < 0.000001) {
+            String formula = cell.getStringFormula();
+            String[] formulaTokens = formula.split(" ");
+            Map<String, Integer> numberCounts = new HashMap<>();
+            Map<String, Integer> tokenCounts = new HashMap<>();
+            boolean valid = true;
+            for (String gameNumber : this.currentGameNumbers) {
+                numberCounts.put(gameNumber, numberCounts.getOrDefault(gameNumber, 0) + 1);
+            }
 
-        return Math.abs(value - target) < tolerance;
+            for (String token : formulaTokens) {
+                if (numberCounts.containsKey(token)) {
+                    tokenCounts.put(token, tokenCounts.getOrDefault(token, 0) + 1);
+                }
+            }
+
+
+            if (!tokenCounts.equals(numberCounts)) {
+                    valid = false;
+            }
+            
+            if (valid) {
+                this.pageMemory.setWinner(playerName);
+            }
+        }
     }
 
     // Method to get the current cell's formula as a string
@@ -82,7 +114,7 @@ public class GamePageManager {
     // Method to reset the page memory
     public void reset() {
         this.currentGameNumbers = generateGameNumbers();
-        pageMemory = new PageMemory();
+        this.pageMemory.reset(this.currentGameNumbers);
     }
 
     // Method to get the page memory as a JSON string

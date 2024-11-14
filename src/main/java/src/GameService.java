@@ -55,7 +55,7 @@ public class GameService {
     }
 
     // Return the current state of the game
-    public String getGameState() {
+    public String getGamePage() {
         return gameManager.pageToJSON();
     }
 }

@@ -7,6 +7,9 @@ const GameTest: React.FC = () => {
     const [formula, setFormula] = useState('');
     const [result, setResult] = useState('0');
     const [gameNumbers, setGameNumbers] = useState<string[]>([]);
+    const [winner, setWinner] = useState<string>('');
+    const [winnerFormula, setWinnerFormula] = useState<string>('');
+    const [status, setStatus] = useState<string>('false');
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -22,7 +25,7 @@ const GameTest: React.FC = () => {
                 updateDisplay(client);
             } catch (error) {
                 if (error instanceof Error) {
-                    if (error.message.includes('already active')) {
+                    if (error.message.includes("Player already active")) {
                         alert('This player name is already in use. Please choose another name.');
                     } else {
                         alert(`Failed to join game: ${error.message}`);
@@ -38,8 +41,43 @@ const GameTest: React.FC = () => {
         setFormula(client.getCurrentPlayerFormula());
         setResult(client.getCurrentPlayerResult());
         setGameNumbers(client.getGameNumbersString());
+        setStatus(client.getGameStatus());
+        if (client.isGameFinished()) {
+            setWinner(client.getWinner());
+            setWinnerFormula(client.getWinnerFormula());
+        }
         //setOtherPlayers(client.getOtherPlayersStatus());
     };
+
+    useEffect (() => {
+        if (gameClient) {
+            const interval = setInterval( async() => {
+                await gameClient.fetchGamePage();
+                updateDisplay(gameClient);
+            }, 50);
+            return () => clearInterval(interval);
+        }
+    }, [gameClient, isLoggedIn]);
+
+    const resetGameState = () => {
+        setPlayerName('');
+        setGameClient(null);
+        setFormula('');
+        setResult('0');
+        setGameNumbers([]);
+        setIsLoggedIn(false);
+    };
+
+    const handleLogout = async () => {
+        if (!gameClient) return;
+
+        try {
+            await gameClient.leaveGame();
+            resetGameState();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 
     const handleTokenClick = async (token: string) => {
         if (!gameClient) return;
@@ -90,6 +128,17 @@ const GameTest: React.FC = () => {
                 <div>
                     <h1>24 Game</h1>
                     <div>Player: {playerName}</div>
+                    <div>Status: {status} </div>
+                    <div>Winner: {winner} </div>
+                    <div>WinnerFormula: {winnerFormula} </div>
+
+                    {/* Show winner if game is completed */}
+                    {gameClient?.isGameFinished() && (
+                        <div className="winner-info">
+                            <h2>Winner: {winner}</h2>
+                            <p>Winning Formula: {winnerFormula}</p>
+                        </div>
+                    )}
                     
                     {/* Game Numbers Display */}
                     <div>
@@ -121,6 +170,7 @@ const GameTest: React.FC = () => {
                     <div>
                         <button onClick={handleClear}>Clear</button>
                         <button onClick={handleRemove}>Undo</button>
+                        <button onClick={handleLogout}>Leave Game</button> 
                     </div>
                 </div>
             )}

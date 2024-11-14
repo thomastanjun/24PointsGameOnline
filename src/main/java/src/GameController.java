@@ -20,6 +20,7 @@ public class GameController {
     public ResponseEntity<?> addPlayer(@PathVariable String name) {
         try {
             String jsonResponse = gameService.addPlayer(name);  
+            System.out.println("Backend sending: " + jsonResponse); // Debug log
             return ResponseEntity.ok(jsonResponse);
         } catch (IllegalArgumentException e) {
             return ResponseEntity
@@ -78,9 +79,9 @@ public class GameController {
     
 
     @GetMapping("/state/{name}")
-    public ResponseEntity<String> getGameState(@PathVariable String name) {
-        String gameState = gameService.getGameState();
-        return ResponseEntity.ok(gameState);
+    public ResponseEntity<String> getGamePage(@PathVariable String name) {
+        String jsonResponse = gameService.getGamePage();
+        return ResponseEntity.ok(jsonResponse);
 }
             
 }

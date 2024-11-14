@@ -10,9 +10,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PageMemory {
     private Map<String, Cell> playerCells;
+    private boolean gameStatus;
+    private String winner;
+    private String winnerFormula;
+    private String[] currentGameNumbers;
 
-    public PageMemory() {
+    public PageMemory(String[] numbers) {
         this.playerCells = new HashMap<>();
+        this.gameStatus = false;
+        this.winner = "";
+        this.winnerFormula = "";
+        this.currentGameNumbers = numbers;
     }
 
     // Asign a cell for a new player
@@ -29,6 +37,23 @@ public class PageMemory {
             throw new IllegalArgumentException("Player " + playerName + " not found");
         }
         playerCells.remove(playerName);
+    }
+
+    public void setWinner(String playerName) {
+        this.gameStatus = true;
+        this.winner = playerName;
+        this.winnerFormula = playerCells.get(playerName).getStringFormula();
+    }
+
+    // Reset player cells but keep the players amd update game numbers
+    public void reset(String[] numbers) {
+        for (Cell cell : playerCells.values()) {
+            cell.clear();
+        }
+        this.gameStatus = false;
+        this.winner = "";
+        this.winnerFormula = "";
+        this.currentGameNumbers = numbers;
     }
 
     // Get a player's cell
@@ -83,8 +108,8 @@ public class PageMemory {
     }
 
     // Get a json representation of the game page
-    public Map<String, Map<String, String>> pageContainer() {
-        Map<String, Map<String, String>> container = new HashMap<>();
+    public Map<String, Map<String, String>> playersContainer() {
+        Map<String, Map<String, String>> playersContainer = new HashMap<>();
 
         for (Map.Entry<String, Cell> entry : playerCells.entrySet()) {
             String playerName = entry.getKey();
@@ -95,18 +120,30 @@ public class PageMemory {
             cellContents.put("value", String.valueOf(cell.getValue())); 
             cellContents.put("error", cell.getError());  
 
-            container.put(playerName, cellContents);
+            playersContainer.put(playerName, cellContents);
         }
 
-        return container;
+        return playersContainer;
     }
 
     // Convert the game page to a JSON string
     public String pageToJSON() {
+        Map<String, Object> container = new HashMap<>();
+        Map<String, String> gameStatus = new HashMap<>();
+
+        gameStatus.put("gameStatus", String.valueOf(this.gameStatus));
+        gameStatus.put("winner", this.winner);
+        gameStatus.put("winnerFormula", this.winnerFormula);
+
+        container.put("gameStatus", gameStatus);
+        container.put("gameNumbers", this.currentGameNumbers);
+        
+        container.put("players", playersContainer());
+
         ObjectMapper mapper = new ObjectMapper();
         try {
-            System.out.println(mapper.writeValueAsString(pageContainer())); // Debug log
-            return mapper.writeValueAsString(pageContainer());
+            System.out.println(mapper.writeValueAsString(playersContainer())); // Debug log
+            return mapper.writeValueAsString(container);
         } catch (Exception e) {
             throw new RuntimeException("Error converting to JSON", e);
         }
@@ -151,12 +188,13 @@ public class PageMemory {
         }
     }
 
-
+    /* 
     // Create a game page from a JSON string
     public static PageMemory createPageFromJSON(String jsonString) {
         PageMemory page = new PageMemory();
         page.updatePageFromJSON(jsonString);
         return page;
     }
+    */
     
 }
