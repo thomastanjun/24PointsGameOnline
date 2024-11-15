@@ -51,18 +51,15 @@
 
     <!-- Build configuration -->
     <build>
-    <sourceDirectory>backend/src/main/java</sourceDirectory>
-    <outputDirectory>${project.basedir}/backend/target/classes</outputDirectory>  
-    <directory>${project.basedir}/backend/target</directory>  
-    <plugins>
-        <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <configuration>
-                <executable>true</executable>
-            </configuration>
-        </plugin>
-    </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
 </project>
