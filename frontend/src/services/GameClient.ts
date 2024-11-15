@@ -120,7 +120,7 @@ class GameClient {
                 method: 'PUT'
             });
             const data = await response.json();
-            this._gameNumbers = data.gameNumbers;
+            this._updateGameState(data);
         } catch (error) {
             console.error('Error starting new game:', error);
             throw error;

@@ -1,4 +1,4 @@
-package src.GameEngine;
+package game.GameEngine;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -74,7 +74,7 @@ public class GamePageManager {
     private void validateAnswer(Cell cell, String playerName) {
         double value = cell.getValue();
          
-        if (Math.abs(value - 24) < 0.000001) {
+        if (!this.gameState && Math.abs(value - 24) < 0.000001) {
             String formula = cell.getStringFormula();
             String[] formulaTokens = formula.split(" ");
             Map<String, Integer> numberCounts = new HashMap<>();
@@ -97,6 +97,7 @@ public class GamePageManager {
             
             if (valid) {
                 this.pageMemory.setWinner(playerName);
+                this.gameState = true;
             }
         }
     }
@@ -115,6 +116,9 @@ public class GamePageManager {
     public void reset() {
         this.currentGameNumbers = generateGameNumbers();
         this.pageMemory.reset(this.currentGameNumbers);
+        this.gameState = false;
+        this.winnerFormula = "";
+        this.winner = "";
     }
 
     // Method to get the page memory as a JSON string

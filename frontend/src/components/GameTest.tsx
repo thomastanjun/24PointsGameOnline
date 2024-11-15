@@ -1,5 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import GameClient from '../services/GameClient';
+import {
+    NumberButton,
+    OperatorButton,
+    ControlButton,
+    NumbersGrid,
+    OperatorGrid,
+    ButtonGroup,
+    QuitButton,
+} from './GameButtons';
+import {
+    Container,
+    Header,
+    Title,
+    GameBoard,
+    FormulaDisplay,
+    ResultDisplay,
+    LoginForm,
+    Input,
+    WinnerDisplay,
+    WinnerFormula,
+    PlayerName,
+    GameControls
+} from './GameStyles';
 
 const GameTest: React.FC = () => {
     const [playerName, setPlayerName] = useState('');
@@ -42,10 +65,9 @@ const GameTest: React.FC = () => {
         setResult(client.getCurrentPlayerResult());
         setGameNumbers(client.getGameNumbersString());
         setStatus(client.getGameStatus());
-        if (client.isGameFinished()) {
-            setWinner(client.getWinner());
-            setWinnerFormula(client.getWinnerFormula());
-        }
+        setWinner(client.getWinner());
+        setWinnerFormula(client.getWinnerFormula());
+        
         //setOtherPlayers(client.getOtherPlayersStatus());
     };
 
@@ -68,12 +90,27 @@ const GameTest: React.FC = () => {
         setIsLoggedIn(false);
     };
 
+    const resetGameStatus = () => {
+        setWinner('');
+        setWinnerFormula('');
+    };
+
     const handleLogout = async () => {
         if (!gameClient) return;
-
         try {
             await gameClient.leaveGame();
             resetGameState();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const handleNewGame = async () => {
+        if (!gameClient) return;
+        try {
+            await gameClient.startNewGame();
+            resetGameStatus();
+            updateDisplay(gameClient);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -110,72 +147,96 @@ const GameTest: React.FC = () => {
     };
 
     return (
-        <div>
+        <Container>
             {!isLoggedIn ? (
-                // Login Form
-                <form onSubmit={handleLogin}>
-                    <h2>Enter Your Name to Play</h2>
-                    <input
+                <LoginForm onSubmit={handleLogin}>
+                    <Title>24 Game</Title>
+                    <Input
                         type="text"
                         value={playerName}
                         onChange={(e) => setPlayerName(e.target.value)}
                         placeholder="Enter your name"
                     />
-                    <button type="submit">Join Game</button>
-                </form>
+                    <ControlButton type="submit">Join Game</ControlButton>
+                </LoginForm>
             ) : (
-                // Game Interface
-                <div>
-                    <h1>24 Game</h1>
-                    <div>Player: {playerName}</div>
-                    <div>Status: {status} </div>
-                    <div>Winner: {winner} </div>
-                    <div>WinnerFormula: {winnerFormula} </div>
+                <>
+                    <Header>
+                        <Title>24 Game</Title>
+                        <PlayerName>Player: {playerName}</PlayerName>
+                        CurrentWinner: {winner}
+                        <QuitButton onClick={handleLogout}>
+                            Quit Game
+                        </QuitButton>
+                    </Header>
 
-                    {/* Show winner if game is completed */}
-                    {gameClient?.isGameFinished() && (
-                        <div className="winner-info">
-                            <h2>Winner: {winner}</h2>
-                            <p>Winning Formula: {winnerFormula}</p>
-                        </div>
+                    {winner && (
+                        <WinnerDisplay>
+                            <h2>We have a winner!</h2>
+                            <div>Player: {winner}</div>
+                            <WinnerFormula>
+                                Winning Formula: {winnerFormula}
+                            </WinnerFormula>
+                        </WinnerDisplay>
                     )}
-                    
-                    {/* Game Numbers Display */}
-                    <div>
-                        <h2>Game Numbers:</h2>
-                        {gameNumbers.map((num, index) => (
-                            <button key={index} onClick={() => handleTokenClick(num)}>
-                                {num}
-                            </button>
-                        ))}
-                    </div>
 
-                    {/* Current Player's Formula and Result */}
-                    <div>
-                        <h2>Your Formula: {formula}</h2>
-                        <h2>Result: {result}</h2>
-                    </div>
-                    
-                    
-                    {/* Operators */}
-                    <div>
-                        {['+', '-', '*', '/', '(', ')'].map((op) => (
-                            <button key={op} onClick={() => handleTokenClick(op)}>
-                                {op}
-                            </button>
-                        ))}
-                    </div>
+                    <GameBoard>
+                        <div>Player: {playerName}</div>
+                        
+                        <NumbersGrid>
+                            {gameNumbers.map((num, index) => (
+                                <NumberButton 
+                                    key={index} 
+                                    onClick={() => handleTokenClick(num)}
+                                >
+                                    {num}
+                                </NumberButton>
+                            ))}
+                        </NumbersGrid>
 
-                    {/* Control Buttons */}
-                    <div>
-                        <button onClick={handleClear}>Clear</button>
-                        <button onClick={handleRemove}>Undo</button>
-                        <button onClick={handleLogout}>Leave Game</button> 
-                    </div>
-                </div>
+                        <FormulaDisplay>
+                            {formula || 'Start building your formula'}
+                        </FormulaDisplay>
+
+                        <ResultDisplay>
+                            Result: {result}
+                        </ResultDisplay>
+                        
+                        <OperatorGrid>
+                            {['+', '-', '*', '/', '(', ')'].map((op) => (
+                                <OperatorButton 
+                                    key={op} 
+                                    onClick={() => handleTokenClick(op)}
+                                >
+                                    {op}
+                                </OperatorButton>
+                            ))}
+                        </OperatorGrid>
+
+                        <ButtonGroup>
+                            <ControlButton
+                                onClick={handleClear}
+                            >
+                                Clear
+                            </ControlButton>
+                            <ControlButton
+                                onClick={handleRemove}
+                            >
+                                Undo
+                            </ControlButton>
+                            <ControlButton
+                                onClick={handleNewGame}
+                            >
+                                New Game
+                            </ControlButton>
+                        
+                        </ButtonGroup>
+                    </GameBoard>
+                </>
             )}
-        </div>
+        </Container>
     );
 };
+
 
 export default GameTest;

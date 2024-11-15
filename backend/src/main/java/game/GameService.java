@@ -1,9 +1,9 @@
-package src;
+package game;
 
 import org.springframework.stereotype.Service;
 
-import src.GameEngine.GamePageManager;
-import src.GameEngine.PlayerManager;
+import game.GameEngine.GamePageManager;
+import game.GameEngine.PlayerManager;
 
 @Service
 public class GameService {
