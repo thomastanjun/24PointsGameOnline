@@ -39,6 +39,10 @@ public class GamePageManager {
         this.pageMemory.addPlayer(playerName);
     }
 
+    public boolean isEmpty() {
+        return this.pageMemory.isEmpty();
+    }
+
     public void removePlayer(String playerName) {
         if (!this.isPlayerActive(playerName)) {
             throw new IllegalArgumentException("Player " + playerName + "does not exist");

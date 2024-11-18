@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  max-width: 500px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Arial', sans-serif;
@@ -100,3 +100,35 @@ export const GameControls = styled.div`
   border-top: 1px solid #d3d6da;
 `;
 
+export const GameArea = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;  // Split screen in half
+  gap: 20px;
+  margin-top: 20px;
+`;
+
+export const CurrentPlayerArea = styled.div`
+  padding: 20px;
+  border-right: 2px solid #d3d6da;
+`;
+
+export const OtherPlayersArea = styled.div`
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+export const PlayerCard = styled.div`
+  padding: 15px;
+  border: 1px solid #d3d6da;
+  border-radius: 8px;
+  background: #f8f9fa;
+`;
+
+export const PlayerHeader = styled.div`
+  font-size: 18px;
+  font-weight: bold;
+  color: #1a1a1b;
+  margin-bottom: 10px;
+`;

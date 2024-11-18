@@ -39,6 +39,10 @@ public class PageMemory {
         playerCells.remove(playerName);
     }
 
+    public boolean isEmpty() {
+        return playerCells.isEmpty();
+    }
+
     public void setWinner(String playerName) {
         this.gameStatus = true;
         this.winner = playerName;

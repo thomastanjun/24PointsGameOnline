@@ -12,6 +12,7 @@ class GameClient {
     private _cells: {[playerName: string]: CellInfo};
     private _gameNumbers: string[];
     private _gameStatus: GameStatusInfo;
+    private _roomID: string | null;
 
     constructor(playerName: string) {
         this._baseURL = 'http://localhost:8080/game';
@@ -19,18 +20,35 @@ class GameClient {
         this._cells = {};
         this._gameNumbers = [];
         this._gameStatus = { gameStatus: 'false', winner: '', winnerFormula: '' };
+        this._roomID = null;
     }
 
     // Core game operations
-    public async joinGame(): Promise<void> {
+    public async createRoom(): Promise<string> {
         try {
-            const response = await fetch(`${this._baseURL}/player/${this._playerName}`, {
+            const response = await fetch(`${this._baseURL}/room`, {
+                method: 'POST'
+            });
+            const roomID = await response.text();
+            this._roomID = roomID;
+            console.log("roomID", roomID);
+            return roomID;
+        } catch (error) {
+            console.error('Error creating room:', error);
+            throw error;
+        }
+    }
+
+    public async joinGame(roomID: string): Promise<void> {
+        try {
+            const response = await fetch(`${this._baseURL}/room/${roomID}/add/player/${this._playerName}`, {
                 method: 'PUT'
             });
             if (!response.ok) {
                 const errorData: ErrorResponse = await response.json();
                 throw new Error(errorData.message);
             }
+            this._roomID = roomID;
             const data = await response.json();
             this._updateGameState(data);
         } catch (error) {
@@ -41,9 +59,11 @@ class GameClient {
 
     public async leaveGame(): Promise<void> {
         try {
-            const response = await fetch(`${this._baseURL}/player/${this._playerName}`, {
+            const response = await fetch(`${this._baseURL}/room/${this._roomID}/remove/player/${this._playerName}`, {
                 method: 'DELETE'
             });
+            this._roomID = null;
+            
             if (!response.ok) {
                 const errorData: ErrorResponse = await response.json();
                 throw new Error(errorData.message);
@@ -57,7 +77,7 @@ class GameClient {
 
     public async addToken(token: string): Promise<void> {
         try {
-            const response = await fetch(`${this._baseURL}/add/token/${this._playerName}`, {
+            const response = await fetch(`${this._baseURL}/room/${this._roomID}/add/token/${this._playerName}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'text/plain'
@@ -74,7 +94,7 @@ class GameClient {
 
     public async removeToken(): Promise<void> {
         try {
-            const response = await fetch(`${this._baseURL}/remove/token/${this._playerName}`, {
+            const response = await fetch(`${this._baseURL}/room/${this._roomID}/remove/token/${this._playerName}`, {
                 method: 'PUT'
             });
             const data = await response.json();
@@ -88,7 +108,7 @@ class GameClient {
 
     public async clearFormula(): Promise<void> {
         try {
-            const response = await fetch(`${this._baseURL}/clear/formula/${this._playerName}`, {
+            const response = await fetch(`${this._baseURL}/room/${this._roomID}/clear/formula/${this._playerName}`, {
                 method: 'PUT'
             });
             const data = await response.json();
@@ -116,7 +136,7 @@ class GameClient {
 
     public async startNewGame(): Promise<void> {
         try {
-            const response = await fetch(`${this._baseURL}/newgame/game1`, {
+            const response = await fetch(`${this._baseURL}/room/${this._roomID}/newgame/game1`, {
                 method: 'PUT'
             });
             const data = await response.json();
@@ -129,8 +149,10 @@ class GameClient {
 
     public async fetchGamePage(): Promise<void> {
         try {
-            const response = await fetch(`${this._baseURL}/state/game1`);
+            const response = await fetch(`${this._baseURL}/room/${this._roomID}/state`);
+            
             const data = await response.json();
+            console.log("fetch", response);
             this._updateGameState(data);
         } catch (error) {
             console.error('Error fetching game state:', error);

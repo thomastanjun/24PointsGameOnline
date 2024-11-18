@@ -13,7 +13,11 @@ import {
     Container,
     Header,
     Title,
-    GameBoard,
+    GameArea,
+    CurrentPlayerArea,
+    OtherPlayersArea,
+    PlayerCard,
+    PlayerHeader,
     FormulaDisplay,
     ResultDisplay,
     LoginForm,
@@ -29,11 +33,10 @@ const GameTest: React.FC = () => {
     const [gameClient, setGameClient] = useState<GameClient | null>(null);
     const [formula, setFormula] = useState('');
     const [result, setResult] = useState('0');
-    const [gameNumbers, setGameNumbers] = useState<string[]>([]);
+    const [gameNumbers, setGameNumbers] = useState<string[]>([]); 
     const [winner, setWinner] = useState<string>('');
     const [winnerFormula, setWinnerFormula] = useState<string>('');
     const [status, setStatus] = useState<string>('false');
-
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -41,8 +44,9 @@ const GameTest: React.FC = () => {
         if (playerName.trim()) {
             try {
                 const client = new GameClient(playerName);
-                await client.joinGame();  
-                await client.fetchGameNumbers();
+                const roomID = await client.createRoom();
+                await client.joinGame(roomID);  
+                await client.fetchGamePage();
                 setGameClient(client);
                 setIsLoggedIn(true);
                 updateDisplay(client);
@@ -65,21 +69,34 @@ const GameTest: React.FC = () => {
         setResult(client.getCurrentPlayerResult());
         setGameNumbers(client.getGameNumbersString());
         setStatus(client.getGameStatus());
-        setWinner(client.getWinner());
-        setWinnerFormula(client.getWinnerFormula());
-        
-        //setOtherPlayers(client.getOtherPlayersStatus());
+        if (client.getWinner()) {
+            setWinner(client.getWinner());
+            setWinnerFormula(client.getWinnerFormula());
+        }
     };
 
-    useEffect (() => {
-        if (gameClient) {
-            const interval = setInterval( async() => {
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+
+        if (gameClient && isLoggedIn) {
+            interval = setInterval(async () => {
                 await gameClient.fetchGamePage();
                 updateDisplay(gameClient);
-            }, 50);
+            }, 1000);
             return () => clearInterval(interval);
         }
     }, [gameClient, isLoggedIn]);
+
+
+    const handleLogout = async () => {
+        if (!gameClient) return;
+        try {
+            await gameClient.leaveGame();
+            resetGameState();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
 
     const resetGameState = () => {
         setPlayerName('');
@@ -90,31 +107,17 @@ const GameTest: React.FC = () => {
         setIsLoggedIn(false);
     };
 
-    const resetGameStatus = () => {
-        setWinner('');
-        setWinnerFormula('');
-    };
-
-    const handleLogout = async () => {
-        if (!gameClient) return;
-        try {
-            await gameClient.leaveGame();
-            resetGameState();
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
     const handleNewGame = async () => {
         if (!gameClient) return;
         try {
             await gameClient.startNewGame();
-            resetGameStatus();
+            setWinner('');
+            setWinnerFormula('');
             updateDisplay(gameClient);
         } catch (error) {
             console.error('Error:', error);
         }
-    }
+    };
 
     const handleTokenClick = async (token: string) => {
         if (!gameClient) return;
@@ -164,10 +167,7 @@ const GameTest: React.FC = () => {
                     <Header>
                         <Title>24 Game</Title>
                         <PlayerName>Player: {playerName}</PlayerName>
-                        CurrentWinner: {winner}
-                        <QuitButton onClick={handleLogout}>
-                            Quit Game
-                        </QuitButton>
+                        <QuitButton onClick={handleLogout}>Quit Game</QuitButton>
                     </Header>
 
                     {winner && (
@@ -180,63 +180,67 @@ const GameTest: React.FC = () => {
                         </WinnerDisplay>
                     )}
 
-                    <GameBoard>
-                        <div>Player: {playerName}</div>
-                        
-                        <NumbersGrid>
-                            {gameNumbers.map((num, index) => (
-                                <NumberButton 
-                                    key={index} 
-                                    onClick={() => handleTokenClick(num)}
-                                >
-                                    {num}
-                                </NumberButton>
-                            ))}
-                        </NumbersGrid>
+                    <GameArea>
+                        <CurrentPlayerArea>
+                            <NumbersGrid>
+                                {gameNumbers.map((num, index) => (
+                                    <NumberButton 
+                                        key={index} 
+                                        onClick={() => handleTokenClick(num)}
+                                    >
+                                        {num}
+                                    </NumberButton>
+                                ))}
+                            </NumbersGrid>
 
-                        <FormulaDisplay>
-                            {formula || 'Start building your formula'}
-                        </FormulaDisplay>
+                            <FormulaDisplay>
+                                {formula || 'Start building your formula'}
+                            </FormulaDisplay>
 
-                        <ResultDisplay>
-                            Result: {result}
-                        </ResultDisplay>
-                        
-                        <OperatorGrid>
-                            {['+', '-', '*', '/', '(', ')'].map((op) => (
-                                <OperatorButton 
-                                    key={op} 
-                                    onClick={() => handleTokenClick(op)}
-                                >
-                                    {op}
-                                </OperatorButton>
-                            ))}
-                        </OperatorGrid>
+                            <ResultDisplay>
+                                Result: {result}
+                            </ResultDisplay>
+                            
+                            <OperatorGrid>
+                                {['+', '-', '*', '/', '(', ')'].map((op) => (
+                                    <OperatorButton 
+                                        key={op} 
+                                        onClick={() => handleTokenClick(op)}
+                                    >
+                                        {op}
+                                    </OperatorButton>
+                                ))}
+                            </OperatorGrid>
 
-                        <ButtonGroup>
-                            <ControlButton
-                                onClick={handleClear}
-                            >
-                                Clear
-                            </ControlButton>
-                            <ControlButton
-                                onClick={handleRemove}
-                            >
-                                Undo
-                            </ControlButton>
-                            <ControlButton
-                                onClick={handleNewGame}
-                            >
-                                New Game
-                            </ControlButton>
-                        
-                        </ButtonGroup>
-                    </GameBoard>
+                            <ButtonGroup>
+                                <ControlButton onClick={handleClear}>
+                                    Clear
+                                </ControlButton>
+                                <ControlButton onClick={handleRemove}>
+                                    Undo
+                                </ControlButton>
+                                <ControlButton onClick={handleNewGame}>
+                                    New Game
+                                </ControlButton>
+                            </ButtonGroup>
+                        </CurrentPlayerArea>
+
+                        <OtherPlayersArea>
+                            {gameClient && Object.entries(gameClient['_cells'])
+                                .filter(([name]) => name !== playerName)
+                                .map(([name, cell]) => (
+                                    <PlayerCard key={name}>
+                                        <PlayerHeader>{name}</PlayerHeader>
+                                        <FormulaDisplay>{cell.formula || 'No formula yet'}</FormulaDisplay>
+                                        <ResultDisplay>Result: {cell.value || '0'}</ResultDisplay>
+                                    </PlayerCard>
+                                ))}
+                        </OtherPlayersArea>
+                    </GameArea>
                 </>
             )}
         </Container>
     );
 };
-
 
 export default GameTest;
