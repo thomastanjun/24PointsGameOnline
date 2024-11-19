@@ -1,5 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import GameClient from '../services/GameClient';
+import { GameClientContext } from '../contexts/GameClientContext';
+
+
 import {
     NumberButton,
     OperatorButton,
@@ -8,7 +12,8 @@ import {
     OperatorGrid,
     ButtonGroup,
     QuitButton,
-} from './GameButtons';
+} from '../components/GameButtons';
+
 import {
     Container,
     Header,
@@ -26,43 +31,20 @@ import {
     WinnerFormula,
     PlayerName,
     GameControls
-} from './GameStyles';
+} from '../components/GameStyles';
 
-const GameTest: React.FC = () => {
-    const [playerName, setPlayerName] = useState('');
-    const [gameClient, setGameClient] = useState<GameClient | null>(null);
-    const [formula, setFormula] = useState('');
-    const [result, setResult] = useState('0');
-    const [gameNumbers, setGameNumbers] = useState<string[]>([]); 
+const GamePage: React.FC = () => {
+    const navigate = useNavigate();
+    const { client } = useContext(GameClientContext);
+    console.log("a new render");
+
+    const [playerName, setPlayerName] = useState(client?.getPlayerName() || '');
+    const [formula, setFormula] = useState(client?.getCurrentPlayerFormula() || '');
+    const [result, setResult] = useState(client?.getCurrentPlayerResult() || '0');
+    const [gameNumbers, setGameNumbers] = useState<string[]>(client?.getGameNumbersString() || []); 
     const [winner, setWinner] = useState<string>('');
     const [winnerFormula, setWinnerFormula] = useState<string>('');
     const [status, setStatus] = useState<string>('false');
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (playerName.trim()) {
-            try {
-                const client = new GameClient(playerName);
-                const roomID = await client.createRoom();
-                await client.joinGame(roomID);  
-                await client.fetchGamePage();
-                setGameClient(client);
-                setIsLoggedIn(true);
-                updateDisplay(client);
-            } catch (error) {
-                if (error instanceof Error) {
-                    if (error.message.includes("Player already active")) {
-                        alert('This player name is already in use. Please choose another name.');
-                    } else {
-                        alert(`Failed to join game: ${error.message}`);
-                    }
-                }
-            }
-        } else {
-            alert('Please enter your name');
-        }
-    };
 
     const updateDisplay = (client: GameClient) => {
         setFormula(client.getCurrentPlayerFormula());
@@ -75,75 +57,67 @@ const GameTest: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        let interval: NodeJS.Timeout;
-
-        if (gameClient && isLoggedIn) {
-            interval = setInterval(async () => {
-                await gameClient.fetchGamePage();
-                updateDisplay(gameClient);
-            }, 1000);
-            return () => clearInterval(interval);
-        }
-    }, [gameClient, isLoggedIn]);
-
 
     const handleLogout = async () => {
-        if (!gameClient) return;
+        if (!client) return;
         try {
-            await gameClient.leaveGame();
+            await client.leaveGame();
             resetGameState();
+            client.resetClient();
+            navigate('/mode-selection');
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
+    
     const resetGameState = () => {
         setPlayerName('');
-        setGameClient(null);
         setFormula('');
         setResult('0');
         setGameNumbers([]);
-        setIsLoggedIn(false);
+        setWinner('');
+        setWinnerFormula('');
     };
+    
 
     const handleNewGame = async () => {
-        if (!gameClient) return;
+        if (!client) return;
         try {
-            await gameClient.startNewGame();
+            await client.startNewGame();
             setWinner('');
             setWinnerFormula('');
-            updateDisplay(gameClient);
+            updateDisplay(client);
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
     const handleTokenClick = async (token: string) => {
-        if (!gameClient) return;
+        if (!client) return;
         try {
-            await gameClient.addToken(token);
-            updateDisplay(gameClient);
+            await client.addToken(token);
+            updateDisplay(client);
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
     const handleRemove = async () => {
-        if (!gameClient) return;
+        if (!client) return;
         try {
-            await gameClient.removeToken();
-            updateDisplay(gameClient);
+            await client.removeToken();
+            updateDisplay(client);
         } catch (error) {
             console.error('Error:', error);
         }
     };
     
     const handleClear = async () => {
-        if (!gameClient) return;
+        if (!client) return;
         try {
-            await gameClient.clearFormula();
-            updateDisplay(gameClient);
+            await client.clearFormula();
+            updateDisplay(client);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -151,18 +125,6 @@ const GameTest: React.FC = () => {
 
     return (
         <Container>
-            {!isLoggedIn ? (
-                <LoginForm onSubmit={handleLogin}>
-                    <Title>24 Game</Title>
-                    <Input
-                        type="text"
-                        value={playerName}
-                        onChange={(e) => setPlayerName(e.target.value)}
-                        placeholder="Enter your name"
-                    />
-                    <ControlButton type="submit">Join Game</ControlButton>
-                </LoginForm>
-            ) : (
                 <>
                     <Header>
                         <Title>24 Game</Title>
@@ -172,7 +134,7 @@ const GameTest: React.FC = () => {
 
                     {winner && (
                         <WinnerDisplay>
-                            <h2>We have a winner!</h2>
+                            <h2>You Solved It!</h2>
                             <div>Player: {winner}</div>
                             <WinnerFormula>
                                 Winning Formula: {winnerFormula}
@@ -226,7 +188,7 @@ const GameTest: React.FC = () => {
                         </CurrentPlayerArea>
 
                         <OtherPlayersArea>
-                            {gameClient && Object.entries(gameClient['_cells'])
+                            {client && Object.entries(client['_cells'])
                                 .filter(([name]) => name !== playerName)
                                 .map(([name, cell]) => (
                                     <PlayerCard key={name}>
@@ -238,9 +200,9 @@ const GameTest: React.FC = () => {
                         </OtherPlayersArea>
                     </GameArea>
                 </>
-            )}
+            
         </Container>
     );
 };
 
-export default GameTest;
+export default GamePage;

@@ -6,6 +6,11 @@ interface ErrorResponse {
     timestamp: number;
 }
 
+export enum GameMode {
+    SINGLE = 'SINGLE',
+    MULTI = 'MULTI'
+}
+
 class GameClient {
     private _baseURL: string;
     private _playerName: string; 
@@ -13,6 +18,7 @@ class GameClient {
     private _gameNumbers: string[];
     private _gameStatus: GameStatusInfo;
     private _roomID: string | null;
+    private _gameMode: GameMode | null;
 
     constructor(playerName: string) {
         this._baseURL = 'http://localhost:8080/game';
@@ -21,17 +27,21 @@ class GameClient {
         this._gameNumbers = [];
         this._gameStatus = { gameStatus: 'false', winner: '', winnerFormula: '' };
         this._roomID = null;
+        this._gameMode = null;
+        console.log("GameClient initialized with player:", playerName);
     }
 
     // Core game operations
     public async createRoom(): Promise<string> {
         try {
+            console.log("creating game");
             const response = await fetch(`${this._baseURL}/room`, {
                 method: 'POST'
             });
             const roomID = await response.text();
             this._roomID = roomID;
-            console.log("roomID", roomID);
+            console.log("GameClient roomID", roomID);
+            this._gameMode = GameMode.SINGLE ;
             return roomID;
         } catch (error) {
             console.error('Error creating room:', error);
@@ -160,6 +170,10 @@ class GameClient {
         }
     }
 
+    public setRoomID(roomID: string): void {
+        this._roomID = roomID;
+    }
+
     public getCurrentPlayerFormula(): string {
         return this._cells[this._playerName]?.formula || '';
     }
@@ -192,10 +206,22 @@ class GameClient {
         return this._gameStatus.gameStatus;
     }
 
+    public getPlayerName(): string {
+        return this._playerName;
+    }
+
     private _updateGameState(data: PageInfo): void {
         this._cells = data.players;
         this._gameNumbers = data.gameNumbers;
         this._gameStatus = data.gameStatus;
+    }
+
+    public resetClient(): void {
+        this._cells = {};
+        this._gameNumbers = [];
+        this._gameStatus = { gameStatus: 'false', winner: '', winnerFormula: '' };
+        this._roomID = null;
+        this._gameMode = null;
     }
 
 }
