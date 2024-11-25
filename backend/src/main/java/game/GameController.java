@@ -4,6 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import game.dto.GameDTOs.CellInfo;
+import game.dto.GameDTOs.GameStatus;
+import game.dto.GameDTOs.GamePageInfo;
+import game.dto.GameDTOs.RoomInfo;
+import game.dto.GameDTOs.RoomResponse;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -16,21 +26,23 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    @PostMapping("/room")
-    public ResponseEntity<String> createRoom() {
-        String roomID = gameService.createRoom(true);
-        System.out.println("Creating room: " + roomID); // Debug log
+    @PostMapping("/room/{maxPlayers}")
+    public ResponseEntity<String> createRoom(
+        @PathVariable int maxPlayers) {
+        System.out.println("Creating room..."); // Debug log
+        String roomID = this.gameService.createRoom(true, maxPlayers);
+        System.out.println("Created room: " + roomID); // Debug log
         return ResponseEntity.ok(roomID);
     }
-
 
     @PutMapping("/room/{roomID}/add/player/{name}")
     public ResponseEntity<?> addPlayer(
             @PathVariable String name,
             @PathVariable String roomID) {
         try {
-            String jsonResponse = gameService.addPlayer(name, roomID);  
-            System.out.println("Adding player: " + jsonResponse); // Debug log
+            System.out.println("Adding player: " + name + roomID); // Debug log
+            GamePageInfo jsonResponse = this.gameService.addPlayer(name, roomID);  
+            System.out.println("Added player: " + jsonResponse); // Debug log
             return ResponseEntity.ok(jsonResponse);
         } catch (IllegalArgumentException e) {
             return ResponseEntity
@@ -45,7 +57,7 @@ public class GameController {
             @PathVariable String roomID) {
         try {
             System.out.println("Removing player: " + name); // Debug log
-            gameService.removePlayer(name, roomID);
+            this.gameService.removePlayer(name, roomID);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity
@@ -55,49 +67,83 @@ public class GameController {
     }
 
     @PutMapping("/room/{roomID}/add/token/{name}")
-    public ResponseEntity<String> addToken(
+    public ResponseEntity<GamePageInfo> addToken(
             @PathVariable String roomID,
             @PathVariable String name,
             @RequestBody String token) {
-        String jsonResponse = gameService.addToken(token, name, roomID);
+        GamePageInfo jsonResponse = this.gameService.addToken(token, name, roomID);
         System.out.println("Backend sending: " + jsonResponse); // Debug log
         return ResponseEntity.ok(jsonResponse);
     }
     
     @PutMapping("/room/{roomID}/remove/token/{name}")
-    public ResponseEntity<String> removeToken(
+    public ResponseEntity<GamePageInfo> removeToken(
             @PathVariable String name,
             @PathVariable String roomID) {
-        String jsonResponse = gameService.removeToken(name, roomID);
+        GamePageInfo jsonResponse = this.gameService.removeToken(name, roomID);
         System.out.println("Backend sending: " + jsonResponse); // Debug log
         return ResponseEntity.ok(jsonResponse);
     }
     
     @PutMapping("/room/{roomID}/clear/formula/{name}")
-    public ResponseEntity<String> clearFormula(
+    public ResponseEntity<GamePageInfo> clearFormula(
             @PathVariable String name,
             @PathVariable String roomID) {
-        String jsonResponse = gameService.clearFormula(name, roomID);
+        GamePageInfo jsonResponse = this.gameService.clearFormula(name, roomID);
         System.out.println("Backend sending: " + jsonResponse); // Debug log
         return ResponseEntity.ok(jsonResponse);
     }
 
     @PutMapping("/room/{roomID}/newgame/{name}")
-    public ResponseEntity<String> startNewGame(
+    public ResponseEntity<GamePageInfo> startNewGame(
             @PathVariable String name,
             @PathVariable String roomID) {
-        String jsonResponse = gameService.startNewGame(roomID);
+        GamePageInfo jsonResponse = this.gameService.startNewGame(roomID);
         System.out.println("Start New Game, Backend sending: " + jsonResponse); // Debug log
         return ResponseEntity.ok(jsonResponse);
     }
+
+    @GetMapping("/player/{name}")
+    public ResponseEntity<Object> isPlayerActive(
+            @PathVariable String name) {
+        boolean isPlayerActive = this.gameService.isPlayerActive(name);
+        if (isPlayerActive) {
+            return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(new ErrorResponse("Player already active", "0001"));
+        } else {
+            return ResponseEntity.ok().build();
+        }
+    }
+
+    @GetMapping("rooms/available")
+    public ResponseEntity<?> getAvailableRooms() {
+        try {
+            List<RoomInfo> rooms = this.gameService.getAvailableRooms();
+            System.out.println("Available rooms: " + rooms); // Debug log
+            RoomResponse response = new RoomResponse();
+            if (rooms.isEmpty()) {
+                response.setStatus("Empty");
+                response.setRoomList(rooms);
+                return ResponseEntity.ok(response);
+            } else {
+                response.setStatus("Available");
+                response.setRoomList(rooms);
+                return ResponseEntity.ok(response);
+            }} catch (Exception e) {
+                return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse("No rooms available", "0003"));
+            }
+    }
     
     @GetMapping("/room/{roomID}/state")
-    public ResponseEntity<String> getGamePage(
+    public ResponseEntity<GamePageInfo> getGamePage(
             @PathVariable String roomID) {
         System.out.println("Fetching..."); // Debug log
-        String jsonResponse = gameService.getGamePage(roomID);
-        System.out.println("Fetching: " + jsonResponse); // Debug log
+        GamePageInfo jsonResponse = this.gameService.getGamePage(roomID);
+        System.out.println("Fetched: " + jsonResponse); // Debug log
         return ResponseEntity.ok(jsonResponse);
-}
+    }
             
 }

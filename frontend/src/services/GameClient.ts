@@ -1,4 +1,5 @@
 import { PageInfo, CellInfo, GameStatusInfo } from '../GameDefinitions';
+import { Rooms } from '../GameDefinitions';
 
 interface ErrorResponse {
     message: string;
@@ -20,6 +21,8 @@ class GameClient {
     private _roomID: string | null;
     private _gameMode: GameMode | null;
 
+    private _rooms: {[roomID: string]: string};
+
     constructor(playerName: string) {
         this._baseURL = 'http://localhost:8080/game';
         this._playerName = playerName;
@@ -29,13 +32,34 @@ class GameClient {
         this._roomID = null;
         this._gameMode = null;
         console.log("GameClient initialized with player:", playerName);
+
+        this._rooms = {};
     }
 
     // Core game operations
-    public async createRoom(): Promise<string> {
+    public async verifyPlayerName(): Promise<void> {
+        try {
+            const response = await fetch(`${this._baseURL}/player/${this._playerName}`); 
+
+            
+            if (!response.ok) {
+                if (response.status === 409) {
+                    const errorData: ErrorResponse = await response.json();
+                    throw new Error(errorData.message);
+                } else {
+                    throw new Error('Unexpected error: '+ response.status);
+                }
+            }
+        } catch (error) {
+            console.error('Player Already logged in:', error);
+            throw error;
+        }
+    }
+
+    public async createRoom(maxPlayers: string): Promise<string> {
         try {
             console.log("creating game");
-            const response = await fetch(`${this._baseURL}/room`, {
+            const response = await fetch(`${this._baseURL}/room/${maxPlayers}`, {
                 method: 'POST'
             });
             const roomID = await response.text();
@@ -45,6 +69,21 @@ class GameClient {
             return roomID;
         } catch (error) {
             console.error('Error creating room:', error);
+            throw error;
+        }
+    }
+
+    public async fetchRooms(): Promise<Rooms> {
+        try {
+            const response = await fetch(`${this._baseURL}/rooms/available`);
+            if (!response.ok) {
+                console.error('Server response:', response.status, response.statusText);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching rooms:', error);
             throw error;
         }
     }
@@ -129,20 +168,6 @@ class GameClient {
             throw error;
         }
     }
-
-    
-    public async fetchGameNumbers(): Promise<void> {
-        try {
-            const response = await fetch(`${this._baseURL}/numbers/game1`);
-            const data = await response.json();
-            console.log("reveived numbers after fetch", data);
-            this._gameNumbers = data.gameNumbers;
-        } catch (error) {
-            console.error('Error getting game numbers:', error);
-            throw error;
-        }
-    }
-    
 
     public async startNewGame(): Promise<void> {
         try {

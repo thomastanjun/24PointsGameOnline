@@ -10,13 +10,28 @@ const LoginPage = () => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (playerName.trim()) {
-            const client = new GameClient(playerName);
+
+        if (!playerName.trim()) {
+            alert("Player name cannot be empty");
+            return 
+        }
+            
+        const client = new GameClient(playerName);
+        try{
+            await client.verifyPlayerName();
             setGameClient(client);
             console.log("LoginPage Player: ", client.getPlayerName());
 
             navigate('/mode-selection');
+        } catch (error) {
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                console.error('Unexpected error:', error);
+                alert("Unexpected error");
+            }
         }
+        
     };
 
     return (

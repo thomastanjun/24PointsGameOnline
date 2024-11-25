@@ -1,11 +1,17 @@
 package game.GameEngine;
 
+import game.dto.GameDTOs.CellInfo;
+import game.dto.GameDTOs.GameStatus;
+import game.dto.GameDTOs.GamePageInfo;
+
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 
 public class PageMemory {
@@ -16,7 +22,7 @@ public class PageMemory {
     private String[] currentGameNumbers;
 
     public PageMemory(String[] numbers) {
-        this.playerCells = new HashMap<>();
+        this.playerCells = new LinkedHashMap<>();
         this.gameStatus = false;
         this.winner = "";
         this.winnerFormula = "";
@@ -29,6 +35,7 @@ public class PageMemory {
             throw new IllegalArgumentException("Player " + playerName + " already exists");
         }
         playerCells.putIfAbsent(playerName, new Cell());
+        System.out.println("PageMemory Player added: " + playerName); // Debug log
     }
 
     // Remove a player from the game page
@@ -39,8 +46,16 @@ public class PageMemory {
         playerCells.remove(playerName);
     }
 
+    public int getPlayersCount() {
+        return playerCells.size();
+    }
+
     public boolean isEmpty() {
         return playerCells.isEmpty();
+    }
+
+    public String getHostPlayer() {
+        return playerCells.keySet().iterator().next();
     }
 
     public void setWinner(String playerName) {
@@ -111,94 +126,19 @@ public class PageMemory {
         }
     }
 
-    // Get a json representation of the game page
-    public Map<String, Map<String, String>> playersContainer() {
-        Map<String, Map<String, String>> playersContainer = new HashMap<>();
+    public GamePageInfo getGamePageInfo() {
+        GameStatus gameStatus = new GameStatus(String.valueOf(this.gameStatus), this.winner, this.winnerFormula);
 
-        for (Map.Entry<String, Cell> entry : playerCells.entrySet()) {
+        Map<String, CellInfo> playersContainer = new HashMap<>();
+        for (Map.Entry<String, Cell> entry : this.playerCells.entrySet()) {
             String playerName = entry.getKey();
             Cell cell = entry.getValue();
-
-            Map<String, String> cellContents = new HashMap<>();
-            cellContents.put("formula", cell.getStringFormula());  
-            cellContents.put("value", String.valueOf(cell.getValue())); 
-            cellContents.put("error", cell.getError());  
-
+            CellInfo cellContents = new CellInfo(cell.getStringFormula(), String.valueOf(cell.getValue()), cell.getError());
             playersContainer.put(playerName, cellContents);
         }
 
-        return playersContainer;
+        GamePageInfo gamePageInfo = new GamePageInfo(gameStatus, this.currentGameNumbers, playersContainer);
+
+        return gamePageInfo;
     }
-
-    // Convert the game page to a JSON string
-    public String pageToJSON() {
-        Map<String, Object> container = new HashMap<>();
-        Map<String, String> gameStatus = new HashMap<>();
-
-        gameStatus.put("gameStatus", String.valueOf(this.gameStatus));
-        gameStatus.put("winner", this.winner);
-        gameStatus.put("winnerFormula", this.winnerFormula);
-
-        container.put("gameStatus", gameStatus);
-        container.put("gameNumbers", this.currentGameNumbers);
-        
-        container.put("players", playersContainer());
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            System.out.println(mapper.writeValueAsString(playersContainer())); // Debug log
-            return mapper.writeValueAsString(container);
-        } catch (Exception e) {
-            throw new RuntimeException("Error converting to JSON", e);
-        }
-    }
-
-    // Update the game page from a JSON string
-    public void updatePageFromJSON(String jsonString) {
-        try {
-            String content = jsonString.substring(1, jsonString.length() - 1);
-            String[] entries = content.split("},");
-            
-            playerCells.clear();
-
-            System.out.println(Arrays.toString(entries)); // Debug log
-    
-            for (String entry : entries) {
-                entry = entry.replace("\"", "").replace("{", "").replace("}", "");
-                System.out.println(entry); // Debug log
-                int colonIndex = entry.indexOf(":");
-                String playerName = entry.substring(0, colonIndex).trim();
-                String cellData = entry.substring(colonIndex + 1).trim();
-    
-                Cell cell = new Cell();
-
-                String[] formulaParts = cellData.split(",")[0].split(":");
-                cell.setFormula(Arrays.asList(formulaParts[1].trim().split(" ")));
-    
-                String[] valueParts = cellData.split(",")[1].split(":");
-                cell.setValue(Double.parseDouble(valueParts[1].trim()));
-    
-                String[] errorParts = cellData.split(",")[2].split(":");
-                if (errorParts.length > 1) {
-                    cell.setError(errorParts[1].trim());
-                } else {
-                    cell.setError("");
-                }
-                
-                playerCells.put(playerName, cell);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Error parsing JSON: " + e.getMessage());
-        }
-    }
-
-    /* 
-    // Create a game page from a JSON string
-    public static PageMemory createPageFromJSON(String jsonString) {
-        PageMemory page = new PageMemory();
-        page.updatePageFromJSON(jsonString);
-        return page;
-    }
-    */
-    
 }

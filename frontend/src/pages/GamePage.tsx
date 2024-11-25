@@ -33,6 +33,9 @@ import {
     GameControls
 } from '../components/GameStyles';
 
+import { RoomInfo } from '../GameDefinitions';
+
+
 const GamePage: React.FC = () => {
     const navigate = useNavigate();
     const { client } = useContext(GameClientContext);
@@ -51,12 +54,13 @@ const GamePage: React.FC = () => {
         setResult(client.getCurrentPlayerResult());
         setGameNumbers(client.getGameNumbersString());
         setStatus(client.getGameStatus());
+
+
         if (client.getWinner()) {
             setWinner(client.getWinner());
             setWinnerFormula(client.getWinnerFormula());
         }
     };
-
 
     const handleLogout = async () => {
         if (!client) return;
@@ -122,6 +126,8 @@ const GamePage: React.FC = () => {
             console.error('Error:', error);
         }
     };
+
+
 
     return (
         <Container>

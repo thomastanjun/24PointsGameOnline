@@ -59,7 +59,7 @@ const ModeSelection: React.FC = () => {
     if (!client) {
       return;
     }
-    const roomID = await client.createRoom();
+    const roomID = await client.createRoom('2');
     await client.joinGame(roomID);
     navigate('/game/single', {
        state: { 
@@ -68,7 +68,7 @@ const ModeSelection: React.FC = () => {
 
   const handleMultiMode = (isSinglePlayer: boolean) => {
     console.log("ModeSelection Player: ", client?.getPlayerName());
-    navigate('/game/single', {
+    navigate('/rooms', {
        state: { 
         mode: 'single' } });
   };

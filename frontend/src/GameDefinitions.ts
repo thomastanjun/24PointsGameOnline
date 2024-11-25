@@ -5,9 +5,8 @@ export interface CellInfo {
 }
 
 export interface GameStatusInfo {
-    winner: string;
     gameStatus: string;
-
+    winner: string;
     winnerFormula: string;
 }
 
@@ -19,4 +18,14 @@ export interface PageInfo {
     gameStatus: GameStatusInfo;
 }
 
+export interface Rooms {
+    status: string;
+    roomList: RoomInfo[];
+}
+
+export interface RoomInfo {
+    roomID: string;
+    hostPlayer: string;
+    vacancySeats: string
+}
 

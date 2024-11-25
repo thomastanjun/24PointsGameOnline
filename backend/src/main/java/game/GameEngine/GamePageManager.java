@@ -3,6 +3,11 @@ package game.GameEngine;
 import java.util.Map;
 import java.util.HashMap;
 
+import game.dto.GameDTOs.CellInfo;
+import game.dto.GameDTOs.GameStatus;
+import game.dto.GameDTOs.GamePageInfo;
+import game.dto.GameDTOs.RoomInfo;
+
 public class GamePageManager {
     private PageMemory pageMemory;
     private PlayerManager playerManager;
@@ -11,8 +16,9 @@ public class GamePageManager {
     private boolean gameState;
     private String winnerFormula;
     private String winner;
+    private int maxPlayers;
 
-    public GamePageManager(PlayerManager playerManager) {
+    public GamePageManager(PlayerManager playerManager, int maxPlayers) {
         
         this.playerManager = playerManager;
         this.numberGenerator = new NumberGenerator();
@@ -21,6 +27,8 @@ public class GamePageManager {
         this.winnerFormula = "";
         this.winner = "";
         this.pageMemory = new PageMemory(this.currentGameNumbers);
+        this.maxPlayers = maxPlayers;
+        System.out.println("GamePageManager Created a room with max player:" + maxPlayers); // Debug log
     }
 
     public String[] generateGameNumbers() {
@@ -31,9 +39,20 @@ public class GamePageManager {
         return this.currentGameNumbers;
     }
 
+    public boolean isGameRoomFull() {
+        System.out.println("GamePageManager Players count: " + this.pageMemory.getPlayersCount()); // Debug log
+        System.out.println("GamePageManager Max players: " + this.maxPlayers); // Debug log
+        System.out.println("GamePageManager isGameRoomFull: " + (this.pageMemory.getPlayersCount() >= this.maxPlayers)); // Debug log
+        return this.pageMemory.getPlayersCount() >= this.maxPlayers;
+    }
+
+    public int getPlayersCount() {
+        return this.pageMemory.getPlayersCount();
+    }
+
     public void addPlayer(String playerName) {
-        if (this.isPlayerActive(playerName)) {
-            throw new IllegalArgumentException("Player " + playerName + "already logged in");
+        if (this.isGameRoomFull()) {
+            throw new IllegalArgumentException("Game room is full");
         }
         this.playerManager.addPlayer(playerName);
         this.pageMemory.addPlayer(playerName);
@@ -53,6 +72,14 @@ public class GamePageManager {
 
     public boolean isPlayerActive(String playerName) {
         return this.playerManager.isPlayerActive(playerName);
+    }
+
+    public String getHostPlayer() {
+        return this.pageMemory.getHostPlayer();
+    }
+    
+    public String getVacancySeats() {
+        return String.valueOf(this.getPlayersCount()) + "/" + String.valueOf(this.maxPlayers);
     }
 
     // Method to add a token to the current cell's formula
@@ -126,33 +153,8 @@ public class GamePageManager {
     }
 
     // Method to get the page memory as a JSON string
-    public String pageToJSON() {    
-        return pageMemory.pageToJSON();
-    }
-    
-    // Method to update the page memory from a JSON string
-    public void updatePageFromJSON(String json) {
-        pageMemory.updatePageFromJSON(json);
-    }
-    
-    // Method to create a page memory from a JSON string
-    public PageMemory createPageFromJSON(String json)  {
-        reset();
-        updatePageFromJSON(json);
-        return pageMemory;
+    public GamePageInfo pageToJSON() {    
+        return this.pageMemory.getGamePageInfo();
     }
 
-    // Method to get the game numbers as a JSON string
-    public String numbersToJSON() {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.append("{\"gameNumbers\":[");
-        for (int i = 0; i < currentGameNumbers.length; i++) {
-            jsonBuilder.append("\"").append(currentGameNumbers[i]).append("\"");
-            if (i < currentGameNumbers.length - 1) {
-                jsonBuilder.append(",");
-            }
-        }
-        jsonBuilder.append("]}");
-        return jsonBuilder.toString();
-    }
 }
