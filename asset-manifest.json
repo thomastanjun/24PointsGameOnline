@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/https//thomastanjun.github.io/24pointsgameonline/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/https//thomastanjun.github.io/24pointsgameonline/static/js/main.8b33536a.chunk.js",
-    "main.js.map": "/https//thomastanjun.github.io/24pointsgameonline/static/js/main.8b33536a.chunk.js.map",
-    "runtime-main.js": "/https//thomastanjun.github.io/24pointsgameonline/static/js/runtime-main.5fe2186e.js",
-    "runtime-main.js.map": "/https//thomastanjun.github.io/24pointsgameonline/static/js/runtime-main.5fe2186e.js.map",
-    "static/js/2.b77a06de.chunk.js": "/https//thomastanjun.github.io/24pointsgameonline/static/js/2.b77a06de.chunk.js",
-    "static/js/2.b77a06de.chunk.js.map": "/https//thomastanjun.github.io/24pointsgameonline/static/js/2.b77a06de.chunk.js.map",
-    "static/js/3.1e6df4fb.chunk.js": "/https//thomastanjun.github.io/24pointsgameonline/static/js/3.1e6df4fb.chunk.js",
-    "static/js/3.1e6df4fb.chunk.js.map": "/https//thomastanjun.github.io/24pointsgameonline/static/js/3.1e6df4fb.chunk.js.map",
-    "index.html": "/https//thomastanjun.github.io/24pointsgameonline/index.html",
-    "static/css/main.6dea0f05.chunk.css.map": "/https//thomastanjun.github.io/24pointsgameonline/static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.b77a06de.chunk.js.LICENSE.txt": "/https//thomastanjun.github.io/24pointsgameonline/static/js/2.b77a06de.chunk.js.LICENSE.txt"
+    "main.css": "/24pointsgameonline/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/24pointsgameonline/static/js/main.8b33536a.chunk.js",
+    "main.js.map": "/24pointsgameonline/static/js/main.8b33536a.chunk.js.map",
+    "runtime-main.js": "/24pointsgameonline/static/js/runtime-main.7afef4c5.js",
+    "runtime-main.js.map": "/24pointsgameonline/static/js/runtime-main.7afef4c5.js.map",
+    "static/js/2.c1fc6e0a.chunk.js": "/24pointsgameonline/static/js/2.c1fc6e0a.chunk.js",
+    "static/js/2.c1fc6e0a.chunk.js.map": "/24pointsgameonline/static/js/2.c1fc6e0a.chunk.js.map",
+    "static/js/3.1e6df4fb.chunk.js": "/24pointsgameonline/static/js/3.1e6df4fb.chunk.js",
+    "static/js/3.1e6df4fb.chunk.js.map": "/24pointsgameonline/static/js/3.1e6df4fb.chunk.js.map",
+    "index.html": "/24pointsgameonline/index.html",
+    "static/css/main.6dea0f05.chunk.css.map": "/24pointsgameonline/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.c1fc6e0a.chunk.js.LICENSE.txt": "/24pointsgameonline/static/js/2.c1fc6e0a.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.5fe2186e.js",
-    "static/js/2.b77a06de.chunk.js",
+    "static/js/runtime-main.7afef4c5.js",
+    "static/js/2.c1fc6e0a.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
     "static/js/main.8b33536a.chunk.js"
   ]
