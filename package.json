@@ -24,7 +24,7 @@
   "homepage": "https//thomastanjun.github.io/24pointsgameonline",
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "deploy": "gh-pages -b Frontend -d build",
     "start": "NODE_OPTIONS='--openssl-legacy-provider' react-scripts start",
     "build": "NODE_OPTIONS='--openssl-legacy-provider' react-scripts build",
     "test": "react-scripts test",
