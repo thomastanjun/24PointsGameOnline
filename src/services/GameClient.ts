@@ -24,7 +24,7 @@ class GameClient {
     private _rooms: {[roomID: string]: string};
 
     constructor(playerName: string) {
-        this._baseURL = 'https://two4pointsgameonline-backend.onrender.com//game';
+        this._baseURL = 'https://two4pointsgameonline-backend.onrender.com/game';
         this._playerName = playerName;
         this._cells = {};
         this._gameNumbers = [];
