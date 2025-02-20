@@ -30,4 +30,8 @@ public class PlayerManager {
     public boolean isPlayerActive(String playerName) {
         return currentPlayers.contains(playerName);
     }
+
+    public int getCurrentPlayersCount() {
+        return currentPlayers.size();
+    }
 }

@@ -111,4 +111,8 @@ public class GameService {
         }
         return room.pageToJSON();
     }
+
+    public int getCurrentPlayersCount() {
+        return this.playerManager.getCurrentPlayersCount();
+    }
 }

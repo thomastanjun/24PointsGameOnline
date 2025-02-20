@@ -18,14 +18,13 @@ import {
     Container,
     Header,
     Title,
-    GameArea,
-    CurrentPlayerArea,
+    GameAreaSingle,
+    CurrentPlayerAreaSingle,
     OtherPlayersArea,
     PlayerCard,
     PlayerHeader,
     FormulaDisplay,
     ResultDisplay,
-    LoginForm,
     Input,
     WinnerDisplay,
     WinnerFormula,
@@ -36,7 +35,7 @@ import {
 import { RoomInfo } from '../GameDefinitions';
 
 
-const GamePage: React.FC = () => {
+const GamePageSingle: React.FC = () => {
     const navigate = useNavigate();
     const { client } = useContext(GameClientContext);
     console.log("a new render");
@@ -48,6 +47,9 @@ const GamePage: React.FC = () => {
     const [winner, setWinner] = useState<string>('');
     const [winnerFormula, setWinnerFormula] = useState<string>('');
     const [status, setStatus] = useState<string>('false');
+
+    const [isCountingDown, setIsCountingDown] = useState(false);
+    const [count, setCount] = useState(3);
 
     const updateDisplay = (client: GameClient) => {
         setFormula(client.getCurrentPlayerFormula());
@@ -61,6 +63,19 @@ const GamePage: React.FC = () => {
             setWinnerFormula(client.getWinnerFormula());
         }
     };
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (isCountingDown && count > 1) {
+            timer = setTimeout(() => setCount(prev => prev - 1), 1000);
+        } else if (count === 1) {
+            timer = setTimeout(() => {
+                setIsCountingDown(false);
+                setCount(3); // Reset for next game
+            }, 1000);
+        }
+        return () => clearTimeout(timer);
+    }, [count, isCountingDown]);
 
     const handleLogout = async () => {
         if (!client) return;
@@ -88,6 +103,7 @@ const GamePage: React.FC = () => {
     const handleNewGame = async () => {
         if (!client) return;
         try {
+            setIsCountingDown(true);
             await client.startNewGame();
             setWinner('');
             setWinnerFormula('');
@@ -148,17 +164,24 @@ const GamePage: React.FC = () => {
                         </WinnerDisplay>
                     )}
 
-                    <GameArea>
-                        <CurrentPlayerArea>
+                    <GameAreaSingle>
+                        <CurrentPlayerAreaSingle>
                             <NumbersGrid>
-                                {gameNumbers.map((num, index) => (
+                                {isCountingDown ? (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="text-4xl font-bold">{count}</div>
+                                    </div>
+                                ) : (
+                                    gameNumbers.map((num, index) => (
                                     <NumberButton 
-                                        key={index} 
-                                        onClick={() => handleTokenClick(num)}
+                                    key={index} 
+                                    onClick={() => handleTokenClick(num)}
                                     >
-                                        {num}
+                                    {num}
                                     </NumberButton>
-                                ))}
+                                ))
+                                )}
+       
                             </NumbersGrid>
 
                             <FormulaDisplay>
@@ -191,24 +214,12 @@ const GamePage: React.FC = () => {
                                     New Game
                                 </ControlButton>
                             </ButtonGroup>
-                        </CurrentPlayerArea>
-
-                        <OtherPlayersArea>
-                            {client && Object.entries(client['_cells'])
-                                .filter(([name]) => name !== playerName)
-                                .map(([name, cell]) => (
-                                    <PlayerCard key={name}>
-                                        <PlayerHeader>{name}</PlayerHeader>
-                                        <FormulaDisplay>{cell.formula || 'No formula yet'}</FormulaDisplay>
-                                        <ResultDisplay>Result: {cell.value || '0'}</ResultDisplay>
-                                    </PlayerCard>
-                                ))}
-                        </OtherPlayersArea>
-                    </GameArea>
+                        </CurrentPlayerAreaSingle>
+                    </GameAreaSingle>
                 </>
             
         </Container>
     );
 };
 
-export default GamePage;
+export default GamePageSingle;

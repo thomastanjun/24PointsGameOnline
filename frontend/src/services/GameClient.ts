@@ -37,6 +37,23 @@ class GameClient {
     }
 
     // Core game operations
+    public async getOnlinePlayerNumber(): Promise<number> {
+        try {
+            const response = await fetch('${this._baseURL/players/count}');
+
+            if (!response.ok) {
+                console.error('Server response:', response.status, response.statusText);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+            
+        } catch (error) {
+            console.error('Error fetching online player number:', error);
+            throw error;
+        }
+    }
+
+
     public async verifyPlayerName(): Promise<void> {
         try {
             const response = await fetch(`${this._baseURL}/player/${this._playerName}`); 
@@ -65,6 +82,7 @@ class GameClient {
             const roomID = await response.text();
             this._roomID = roomID;
             console.log("GameClient roomID", roomID);
+
             this._gameMode = GameMode.SINGLE ;
             return roomID;
         } catch (error) {

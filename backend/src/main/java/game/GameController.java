@@ -103,6 +103,13 @@ public class GameController {
         return ResponseEntity.ok(jsonResponse);
     }
 
+    @GetMapping("/players/count")
+    public ResponseEntity<Integer> getCurrentPlayersCount() {
+        int count = this.gameService.getCurrentPlayersCount();
+        System.out.println("Current players count: " + count); // Debug log
+        return ResponseEntity.ok(count);
+    }
+
     @GetMapping("/player/{name}")
     public ResponseEntity<Object> isPlayerActive(
             @PathVariable String name) {
