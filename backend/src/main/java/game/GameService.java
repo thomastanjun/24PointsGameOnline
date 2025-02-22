@@ -58,24 +58,49 @@ public class GameService {
         return roomType + randomId;
     }
 
-    public GamePageInfo addPlayer(String playerName, String roomId) {
-        System.out.println("Game Service Adding player: " + playerName + " to room: " + roomId);
-        GamePageManager room = this.gameRooms.get(roomId);
-        room.addPlayer(playerName);
-        return room.pageToJSON();
+    public void addPlayer(String playerName) {
+        this.playerManager.addPlayer(playerName);
     }
 
-    public void removePlayer(String playerName, String roomId) {
+    public GamePageInfo assignPlayerToRoom(String playerName, String roomId) {
+        System.out.println("Game Service Adding player: " + playerName + " to room: " + roomId);
+        GamePageManager room = this.gameRooms.get(roomId);
+        if (room == null) {
+            throw new IllegalArgumentException ("Room not found: " + roomId);
+        }
+        if (room.isGameRoomFull()) {
+            throw new IllegalArgumentException("Room is full");
+        }
+        if (this.playerManager.getPlayerRoom(playerName) != null) {
+            throw new IllegalArgumentException("Player already in a room");
+        }
+        try {
+            room.addPlayer(playerName);
+            this.playerManager.assignPlayerToRoom(playerName, roomId);
+            return room.pageToJSON();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to add player: " + playerName +e.getMessage());
+        }
+    }
+
+    public void removePlayer(String playerName) {
+        String roomId = this.playerManager.getPlayerRoom(playerName);
+        if (roomId != null) {
+            GamePageManager room = this.gameRooms.get(roomId);
+            room.removePlayer(playerName);
+            if (room.isEmpty()) {
+                this.gameRooms.remove(roomId);
+            }
+        }
+        this.playerManager.removePlayer(playerName);
+    }
+
+    public void removePlayerFromRoom(String playerName, String roomId) {
         GamePageManager room = this.gameRooms.get(roomId);
         room.removePlayer(playerName);
         if (room.isEmpty()) {
             this.gameRooms.remove(roomId);
         }
-    }
-
-    public boolean isPlayerActive(String playerName, String roomId) {
-        GamePageManager room = this.gameRooms.get(roomId);
-        return room.isPlayerActive(playerName);
     }
 
     public GamePageInfo addToken(String token, String playerName, String roomID) {

@@ -54,7 +54,6 @@ public class GamePageManager {
         if (this.isGameRoomFull()) {
             throw new IllegalArgumentException("Game room is full");
         }
-        this.playerManager.addPlayer(playerName);
         this.pageMemory.addPlayer(playerName);
     }
 
@@ -63,15 +62,7 @@ public class GamePageManager {
     }
 
     public void removePlayer(String playerName) {
-        if (!this.isPlayerActive(playerName)) {
-            throw new IllegalArgumentException("Player " + playerName + "does not exist");
-        }
-        this.playerManager.removePlayer(playerName);
         this.pageMemory.removePlayer(playerName);
-    }
-
-    public boolean isPlayerActive(String playerName) {
-        return this.playerManager.isPlayerActive(playerName);
     }
 
     public String getHostPlayer() {

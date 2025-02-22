@@ -26,6 +26,21 @@ public class GameController {
         this.gameService = gameService;
     }
 
+    @PutMapping("/player/add/{name}")
+    public ResponseEntity<?> addPlayer(
+            @PathVariable String name) {
+        try {
+            System.out.println("Adding player: " + name); // Debug log
+            this.gameService.addPlayer(name);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse("Player already active", "0001"));
+        }
+    }
+
+
     @PostMapping("/room/{maxPlayers}")
     public ResponseEntity<String> createRoom(
         @PathVariable int maxPlayers) {
@@ -36,13 +51,12 @@ public class GameController {
     }
 
     @PutMapping("/room/{roomID}/add/player/{name}")
-    public ResponseEntity<?> addPlayer(
+    public ResponseEntity<?> assignPlayerToRoom(
             @PathVariable String name,
             @PathVariable String roomID) {
         try {
-            System.out.println("Adding player: " + name + roomID); // Debug log
-            GamePageInfo jsonResponse = this.gameService.addPlayer(name, roomID);  
-            System.out.println("Added player: " + jsonResponse); // Debug log
+            System.out.println("Adding player: " + name + " to " + roomID); // Debug log
+            GamePageInfo jsonResponse = this.gameService.assignPlayerToRoom(name, roomID);  
             return ResponseEntity.ok(jsonResponse);
         } catch (IllegalArgumentException e) {
             return ResponseEntity
@@ -51,13 +65,28 @@ public class GameController {
         }
     }
 
-    @DeleteMapping("/room/{roomID}/remove/player/{name}")  
+    // Called when a player completely leaves the game, removes the player from the room and the active players list
+    @DeleteMapping("/player/remove/{name}")  
     public ResponseEntity<?> removePlayer(
+            @PathVariable String name) {
+        try {
+            System.out.println("Removing player: " + name); // Debug log
+            this.gameService.removePlayer(name);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse("Player not found", "0002"));
+        }
+    }
+
+    @DeleteMapping("/room/{roomID}/remove/player/{name}")  
+    public ResponseEntity<?> removePlayerFromRoom(
             @PathVariable String name,
             @PathVariable String roomID) {
         try {
             System.out.println("Removing player: " + name); // Debug log
-            this.gameService.removePlayer(name, roomID);
+            this.gameService.removePlayerFromRoom(name, roomID);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity
