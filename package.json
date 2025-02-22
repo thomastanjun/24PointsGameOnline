@@ -21,7 +21,7 @@
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
-  "homepage":"'https://two4pointsgameonline-backend.onrender.com/game'" ,
+  "homepage":"https://thomastanjun.github.io/24PointsGameOnline" ,
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
