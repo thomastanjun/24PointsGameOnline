@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/js/main.9916a348.chunk.js",
-    "main.js.map": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/js/main.9916a348.chunk.js.map",
-    "runtime-main.js": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/js/runtime-main.5a184c06.js",
-    "runtime-main.js.map": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/js/runtime-main.5a184c06.js.map",
-    "static/js/2.8a3396b5.chunk.js": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/js/2.8a3396b5.chunk.js",
-    "static/js/2.8a3396b5.chunk.js.map": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/js/2.8a3396b5.chunk.js.map",
-    "static/js/3.1e6df4fb.chunk.js": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/js/3.1e6df4fb.chunk.js",
-    "static/js/3.1e6df4fb.chunk.js.map": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/js/3.1e6df4fb.chunk.js.map",
-    "index.html": "/'https://two4pointsgameonline-backend.onrender.com/game'/index.html",
-    "static/css/main.6dea0f05.chunk.css.map": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.8a3396b5.chunk.js.LICENSE.txt": "/'https://two4pointsgameonline-backend.onrender.com/game'/static/js/2.8a3396b5.chunk.js.LICENSE.txt"
+    "main.css": "/24PointsGameOnline/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/24PointsGameOnline/static/js/main.965f8bfb.chunk.js",
+    "main.js.map": "/24PointsGameOnline/static/js/main.965f8bfb.chunk.js.map",
+    "runtime-main.js": "/24PointsGameOnline/static/js/runtime-main.d0a73211.js",
+    "runtime-main.js.map": "/24PointsGameOnline/static/js/runtime-main.d0a73211.js.map",
+    "static/js/2.0c9f0334.chunk.js": "/24PointsGameOnline/static/js/2.0c9f0334.chunk.js",
+    "static/js/2.0c9f0334.chunk.js.map": "/24PointsGameOnline/static/js/2.0c9f0334.chunk.js.map",
+    "static/js/3.1e6df4fb.chunk.js": "/24PointsGameOnline/static/js/3.1e6df4fb.chunk.js",
+    "static/js/3.1e6df4fb.chunk.js.map": "/24PointsGameOnline/static/js/3.1e6df4fb.chunk.js.map",
+    "index.html": "/24PointsGameOnline/index.html",
+    "static/css/main.6dea0f05.chunk.css.map": "/24PointsGameOnline/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.0c9f0334.chunk.js.LICENSE.txt": "/24PointsGameOnline/static/js/2.0c9f0334.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.5a184c06.js",
-    "static/js/2.8a3396b5.chunk.js",
+    "static/js/runtime-main.d0a73211.js",
+    "static/js/2.0c9f0334.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.9916a348.chunk.js"
+    "static/js/main.965f8bfb.chunk.js"
   ]
 }
