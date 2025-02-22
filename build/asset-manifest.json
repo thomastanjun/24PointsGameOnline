@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/24PointsGameOnline/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/24PointsGameOnline/static/js/main.8b33536a.chunk.js",
-    "main.js.map": "/24PointsGameOnline/static/js/main.8b33536a.chunk.js.map",
+    "main.js": "/24PointsGameOnline/static/js/main.b7785e8e.chunk.js",
+    "main.js.map": "/24PointsGameOnline/static/js/main.b7785e8e.chunk.js.map",
     "runtime-main.js": "/24PointsGameOnline/static/js/runtime-main.d0a73211.js",
     "runtime-main.js.map": "/24PointsGameOnline/static/js/runtime-main.d0a73211.js.map",
     "static/js/2.eb6cc0f7.chunk.js": "/24PointsGameOnline/static/js/2.eb6cc0f7.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.d0a73211.js",
     "static/js/2.eb6cc0f7.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.8b33536a.chunk.js"
+    "static/js/main.b7785e8e.chunk.js"
   ]
 }

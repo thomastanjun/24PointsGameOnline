@@ -12,6 +12,8 @@ export enum GameMode {
     MULTI = 'MULTI'
 }
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/game';
+
 class GameClient {
     private _baseURL: string;
     private _playerName: string; 
@@ -24,7 +26,7 @@ class GameClient {
     private _rooms: {[roomID: string]: string};
 
     constructor(playerName: string) {
-        this._baseURL = 'https://two4pointsgameonline-backend.onrender.com/game';
+        this._baseURL = API_URL;
         this._playerName = playerName;
         this._cells = {};
         this._gameNumbers = [];
@@ -106,6 +108,21 @@ class GameClient {
         }
     }
 
+    public async addPlayer(playerName: string): Promise<void> {
+        try {
+            const response = await fetch(`${this._baseURL}/player/add/${playerName}`, {
+                method: 'PUT'
+            });
+            if (!response.ok) {
+                const errorData: ErrorResponse = await response.json();
+                throw new Error(errorData.message);
+            }
+        } catch (error) {
+            console.error('Error adding player:', error);
+            throw error;
+        }
+    }
+
     public async joinGame(roomID: string): Promise<void> {
         try {
             const response = await fetch(`${this._baseURL}/room/${roomID}/add/player/${this._playerName}`, {
@@ -124,20 +141,17 @@ class GameClient {
         }
     }
 
-    public async leaveGame(): Promise<void> {
+    public exitGame(): void {
         try {
-            const response = await fetch(`${this._baseURL}/room/${this._roomID}/remove/player/${this._playerName}`, {
-                method: 'DELETE'
+            fetch(`${this._baseURL}/player/remove/${this._playerName}`, {
+                method: 'DELETE',
+                keepalive: true
             });
+
             this._roomID = null;
-            
-            if (!response.ok) {
-                const errorData: ErrorResponse = await response.json();
-                throw new Error(errorData.message);
-            }
 
         } catch (error) {
-            console.error('Error quitting game:', error);
+            console.error('Error during exit:', error);
             throw error;
         }
     }

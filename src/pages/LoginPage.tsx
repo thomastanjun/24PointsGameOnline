@@ -42,7 +42,7 @@ const LoginPage = () => {
             
         const client = new GameClient(playerName);
         try{
-            await client.verifyPlayerName();
+            await client.addPlayer(playerName);
             setGameClient(client);
             console.log("LoginPage Player: ", client.getPlayerName());
 

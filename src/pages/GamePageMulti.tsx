@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import GameClient from '../services/GameClient';
 import { GameClientContext } from '../contexts/GameClientContext';
+import { useGameExit } from '../hooks/useGameExit';
 
 
 import {
@@ -64,7 +65,7 @@ const GamePageMulti: React.FC = () => {
     const handleLogout = async () => {
         if (!client) return;
         try {
-            await client.leaveGame();
+            await client.exitGame();
             resetGameState();
             client.resetClient();
             navigate('/mode-selection');
@@ -125,6 +126,8 @@ const GamePageMulti: React.FC = () => {
             console.error('Error:', error);
         }
     };
+
+    useGameExit(client);
 
 
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '../components/GameStyles';
 
-const BASE_URL = 'http://localhost:8080/game'; 
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 export const useOnlinePlayerCount = () => {
     const [onlinePlayers, setOnlinePlayers] = useState<number>(0);

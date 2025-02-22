@@ -5,6 +5,7 @@ import { GameClientContext } from '../contexts/GameClientContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import GameClient from '../services/GameClient';
+import { useGameExit } from '../hooks/useGameExit';
 
 const Container = styled.div`
   display: flex;
@@ -73,6 +74,8 @@ const ModeSelection: React.FC = () => {
         mode: 'single' } });
   };
 
+  useGameExit(client);
+  
   return (
     <Container>
       <Title>Select Game Mode</Title>

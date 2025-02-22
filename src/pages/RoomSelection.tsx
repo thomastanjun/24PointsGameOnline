@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import GameClient from '../services/GameClient';
 import { GameClientContext } from '../contexts/GameClientContext';
 import {Rooms, RoomInfo} from '../GameDefinitions';
+import { useGameExit } from '../hooks/useGameExit';
 
 const Container = styled.div`
   display: flex;
@@ -113,6 +114,7 @@ const RoomSelection: React.FC = () => {
     ));
   };
 
+  useGameExit(client);
 
   return (
     <Container>

@@ -9,7 +9,7 @@ import { GameClientProvider } from './contexts/GameClientContext';
 
 function App() {
   return (
-    <BrowserRouter basename = "/24PointsGameOnline">
+    <BrowserRouter>
      <GameClientProvider>
       <Routes>
         <Route path="/" element={<LoginPage />} />
