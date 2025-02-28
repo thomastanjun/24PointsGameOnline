@@ -1,6 +1,6 @@
 export interface CellInfo {
     formula: string;
-    value: string;  
+    result: string;  
     error: string;
 }
 

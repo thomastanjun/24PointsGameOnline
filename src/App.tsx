@@ -6,17 +6,21 @@ import RoomSelection from './pages/RoomSelection';
 import GamePageSingle from './pages/GamePageSingle'; 
 import GamePageMulti from './pages/GamePageMulti'; 
 import { GameClientProvider } from './contexts/GameClientContext';
+import ProtectedRoutes from './components/ProtectedRoutes';
 
 function App() {
   return (
-    <BrowserRouter basename = "/24PointsGameOnline">
+    <BrowserRouter>
      <GameClientProvider>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/mode-selection" element={<ModeSelection />} />
-        <Route path="/rooms" element={<RoomSelection />} />
-        <Route path="/game/single" element={<GamePageSingle />} />
-        <Route path="/game/multi/:roomId" element={<GamePageMulti />} />
+
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/mode-selection" element={<ModeSelection />} />
+          <Route path="/rooms" element={<RoomSelection />} />
+          <Route path="/game/single" element={<GamePageSingle />} />
+          <Route path="/game/multi/:roomId" element={<GamePageMulti />} />
+        </Route>
       </Routes>
       </GameClientProvider>
     </BrowserRouter>

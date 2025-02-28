@@ -85,11 +85,11 @@ const RoomSelection: React.FC = () => {
   const createRoom = async (maxPlayer: string) => {
     if (!client) return;
     try {
-      const roomIDResponse = await client.createRoom(maxPlayer);
-      await client.joinGame(roomIDResponse);
-      navigate('/game/single', {
+      const roomID = await client.createRoom(maxPlayer);
+      await client.joinGame(roomID);
+      navigate(`/game/multi/${roomID}`, {
         state: { 
-         mode: 'single' } });
+         mode: 'multi' } });
 
     } catch (error) {
       console.error('Error creating room:', error);
@@ -119,7 +119,7 @@ const RoomSelection: React.FC = () => {
   return (
     <Container>
       <h1>Game Rooms</h1>
-      <Button onClick={() => createRoom("4")}>Create New Room</Button>
+      <Button onClick={() => createRoom("8")}>Create New Room</Button>
       
       <RoomList>
         {renderRooms()}

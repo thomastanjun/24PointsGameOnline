@@ -64,8 +64,8 @@ const LoginPage = () => {
                 <OnlineDot />
                 <OnlineCount>Online: {onlinePlayers}</OnlineCount>
             </OnlinePlayersBox>
-            <GameTitle>24!</GameTitle>
-            <SubTitle>Combine Numbers and Operators Strategically to Hit 24!</SubTitle>
+            <GameTitle>24</GameTitle>
+            <SubTitle>Combine Numbers to Hit 24</SubTitle>
             
             <Card>
                 <WelcomeText>Welcome to the Game</WelcomeText>
@@ -75,7 +75,7 @@ const LoginPage = () => {
                         <Input
                             value={playerName}
                             onChange={(e) => setPlayerName(e.target.value)}
-                            placeholder="Your game name"
+                            placeholder="Your player name"
                             required
                         />
                     </InputGroup>
@@ -88,8 +88,9 @@ const LoginPage = () => {
                     <RulesTitle>How to Play:</RulesTitle>
                     <RulesList>
                         <Rule>• Use all four numbers exactly once</Rule>
-                        <Rule>• Use basic operations (+, -, ×, ÷)</Rule>
+                        <Rule>• Use basic operations (+, -, ×, ÷) and parentheses</Rule>
                         <Rule>• Make the result equal to 24</Rule>
+                        <Rule>• Play solo or challenge other players</Rule>
                     </RulesList>
                 </GameRules>
             </Card>

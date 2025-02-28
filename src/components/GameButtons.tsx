@@ -58,14 +58,17 @@ export const ControlButton = styled.button`
 export const NumbersGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 16px;
+  justify-items: center;
+  margin-bottom: 5px;
 `;
 
 export const OperatorGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 12px;
+  justify-items: center;
+  margin-bottom: 10px;
 `;
 
 export const QuitButton = styled(ControlButton)`

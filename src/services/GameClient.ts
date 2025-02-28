@@ -17,7 +17,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/game';
 class GameClient {
     private _baseURL: string;
     private _playerName: string; 
-    private _cells: {[playerName: string]: CellInfo};
+    private _cells: { [playerName: string]: CellInfo };
     private _gameNumbers: string[];
     private _gameStatus: GameStatusInfo;
     private _roomID: string | null;
@@ -41,7 +41,7 @@ class GameClient {
     // Core game operations
     public async getOnlinePlayerNumber(): Promise<number> {
         try {
-            const response = await fetch('${this._baseURL/players/count}');
+            const response = await fetch(`${this._baseURL}/players/count`);
 
             if (!response.ok) {
                 console.error('Server response:', response.status, response.statusText);
@@ -236,11 +236,12 @@ class GameClient {
     }
 
     public getCurrentPlayerResult(): string {
-        return this._cells[this._playerName]?.value || '0';
+        console.log("Current Player Result: ", this._cells[this._playerName].result);
+        return this._cells[this._playerName]?.result || '0';
     }
 
     public getCurrentPlayerError(): string {
-        return this._cells[this._playerName]?.value || '';
+        return this._cells[this._playerName]?.error || '';
     }
 
     public getGameNumbersString(): string[] {
@@ -267,7 +268,25 @@ class GameClient {
         return this._playerName;
     }
 
+    public getOtherPlayers(): { [playerName: string]: { formula: string, value: string }} {
+        const otherPlayers: { [playerName: string]: { formula: string, value: string } } = {};
+
+        for (const [playerName, cellInfor] of Object.entries(this._cells)) {
+            if (playerName !== this._playerName) {
+                otherPlayers[playerName] = { 
+                    formula: cellInfor.formula || '', 
+                    value: cellInfor.result || '0'};
+            }
+        }
+        return otherPlayers;
+    }
+
     private _updateGameState(data: PageInfo): void {
+        console.log("Raw data received:", data);
+        console.log("Players structure:", data.players);
+        if (data.players && this._playerName in data.players) {
+            console.log("Current player cell:", data.players[this._playerName]);
+        }
         this._cells = data.players;
         this._gameNumbers = data.gameNumbers;
         this._gameStatus = data.gameStatus;

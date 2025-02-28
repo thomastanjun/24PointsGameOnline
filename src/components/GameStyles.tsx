@@ -154,27 +154,27 @@ export const OnlineCount = styled.span`
 
 
 
-
 export const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
+  min-height: 100vh;
   padding: 20px;
-  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 `;
 
-export const Header = styled.header`
-  text-align: center;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #d3d6da;
+export const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
 `;
 
 export const Title = styled.h1`
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 24px;
   margin: 0;
-  padding: 0;
-  color: #1a1a1b;
+  color: #2a2a2a;
 `;
 
 export const GameBoard = styled.div`
@@ -185,24 +185,32 @@ export const GameBoard = styled.div`
 `;
 
 export const FormulaDisplay = styled.div`
-  width: 100%;
-  padding: 15px;
-  margin: 20px 0;
-  border: 2px solid #d3d6da;
-  border-radius: 4px;
-  font-size: 20px;
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 18px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  background: #f6f7f8;
+  border: 1px solid #e0e0e0;
+  color: #333;
+  word-break: break-word;
+  margin: 10px 0;
 `;
 
 export const ResultDisplay = styled.div`
-  font-size: 24px;
+  background: #e6f7ff;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: bold;
-  color: #1a1a1b;
   text-align: center;
+  border: 1px solid #91d5ff;
+  color: #0050b3;
+  margin: 5px 0 15px 0;
 `;
-
-
 
 export const Input = styled.input`
   padding: 10px;
@@ -214,24 +222,36 @@ export const Input = styled.input`
 
 
 export const WinnerDisplay = styled.div`
-  background: #6aaa64;
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
   text-align: center;
-  margin: 20px 0;
-  animation: fadeIn 0.5s ease-in;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  h2 {
+      color: #52c41a;
+      margin-top: 0;
+      margin-bottom: 16px;
+  }
+
+  div {
+      margin-bottom: 8px;
   }
 `;
 
 export const WinnerFormula = styled.div`
-  font-size: 24px;
   font-weight: bold;
-  margin: 10px 0;
+  font-size: 20px;
+  margin: 12px 0;
+  padding: 12px;
+  background: #fff;
+  border-radius: 8px;
+  color: #333;
 `;
 
 export const PlayerName = styled.div`
@@ -259,11 +279,19 @@ export const GameAreaSingle = styled.div`
 `;
 
 export const GameAreaMulti = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;  
-  gap: 20px;
-  margin-top: 20px;
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  padding: 0;
+  flex-direction: row;
+  justify-content: center;
+
+  @media (max-width: 1024px) {
+      flex-direction: column;
+      align-items: center;
+  }
 `;
+
 
 export const CurrentPlayerAreaSingle = styled.div`
   display: flex;
@@ -279,27 +307,86 @@ export const CurrentPlayerAreaSingle = styled.div`
 `;
 
 export const CurrentPlayerAreaMulti = styled.div`
-  padding: 20px;
-  border-right: 2px solid #d3d6da;
-`;
-
-export const OtherPlayersArea = styled.div`
-  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
 `;
 
+export const OtherPlayersArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 320px;
+`;
+
+export const OtherPlayersHeader = styled.h3`
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e8e8;
+  color: #333;
+`;
+
+
 export const PlayerCard = styled.div`
-  padding: 15px;
-  border: 1px solid #d3d6da;
-  border-radius: 8px;
-  background: #f8f9fa;
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 
 export const PlayerHeader = styled.div`
-  font-size: 18px;
   font-weight: bold;
-  color: #1a1a1b;
-  margin-bottom: 10px;
+  font-size: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #1a1a1a;
+`;
+
+export const GameTimer = styled.div`
+    background: #f0f0f0;
+    color: #333;
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+`;
+export const CountdownOverlay = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 6rem;
+  font-weight: bold;
+  color: #0066cc;
+  animation: pulse 1s infinite;
+
+  @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+  }
+`;
+
+export const RevealingNumber = styled.div<{ delay: number, isRevealed: boolean }>`
+    animation: ${props => props.isRevealed ? 'flipIn 0.5s ease-out forwards' : 'none'};
+    animation-delay: ${props => props.delay}s;
+    opacity: ${props => props.isRevealed ? 1 : 0};
+    transform: rotateY(90deg);
+    
+    @keyframes flipIn {
+        from { transform: rotateY(90deg); opacity: 0; }
+        to { transform: rotateY(0deg); opacity: 1; }
+    }
 `;

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import GameClient from '../services/GameClient';
 import { GameClientContext } from '../contexts/GameClientContext';
+import { useGameLogic } from '../hooks/useGameLogic';
 import { useGameExit } from '../hooks/useGameExit';
 
 
@@ -21,129 +22,38 @@ import {
     Title,
     GameAreaSingle,
     CurrentPlayerAreaSingle,
-    OtherPlayersArea,
-    PlayerCard,
-    PlayerHeader,
     FormulaDisplay,
     ResultDisplay,
-    Input,
     WinnerDisplay,
     WinnerFormula,
     PlayerName,
-    GameControls
+    GameTimer
 } from '../components/GameStyles';
 
-import { RoomInfo } from '../GameDefinitions';
 
 
 const GamePageSingle: React.FC = () => {
+    const {
+        client,
+        playerName,
+        formula,
+        result,
+        gameNumbers,
+        winner,
+        winnerFormula,
+        gameTime,
+        isCountingDown,
+        count,
+        handleTokenClick,
+        handleRemove,
+        handleClear,
+        handleNewGame,
+        handleLogout,
+
+    } = useGameLogic();
+
     const navigate = useNavigate();
-    const { client } = useContext(GameClientContext);
-    console.log("a new render");
 
-    const [playerName, setPlayerName] = useState(client?.getPlayerName() || '');
-    const [formula, setFormula] = useState(client?.getCurrentPlayerFormula() || '');
-    const [result, setResult] = useState(client?.getCurrentPlayerResult() || '0');
-    const [gameNumbers, setGameNumbers] = useState<string[]>(client?.getGameNumbersString() || []); 
-    const [winner, setWinner] = useState<string>('');
-    const [winnerFormula, setWinnerFormula] = useState<string>('');
-    const [status, setStatus] = useState<string>('false');
-
-    const [isCountingDown, setIsCountingDown] = useState(false);
-    const [count, setCount] = useState(3);
-
-    const updateDisplay = (client: GameClient) => {
-        setFormula(client.getCurrentPlayerFormula());
-        setResult(client.getCurrentPlayerResult());
-        setGameNumbers(client.getGameNumbersString());
-        setStatus(client.getGameStatus());
-
-
-        if (client.getWinner()) {
-            setWinner(client.getWinner());
-            setWinnerFormula(client.getWinnerFormula());
-        }
-    };
-
-    useEffect(() => {
-        let timer: NodeJS.Timeout;
-        if (isCountingDown && count > 1) {
-            timer = setTimeout(() => setCount(prev => prev - 1), 1000);
-        } else if (count === 1) {
-            timer = setTimeout(() => {
-                setIsCountingDown(false);
-                setCount(3); // Reset for next game
-            }, 1000);
-        }
-        return () => clearTimeout(timer);
-    }, [count, isCountingDown]);
-
-
-    const handleLogout = async () => {
-        if (!client) return;
-        try {
-            await client.exitGame();
-            resetGameState();
-            client.resetClient();
-            navigate('/mode-selection');
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-
-    
-    const resetGameState = () => {
-        setPlayerName('');
-        setFormula('');
-        setResult('0');
-        setGameNumbers([]);
-        setWinner('');
-        setWinnerFormula('');
-    };
-    
-
-    const handleNewGame = async () => {
-        if (!client) return;
-        try {
-            setIsCountingDown(true);
-            await client.startNewGame();
-            setWinner('');
-            setWinnerFormula('');
-            updateDisplay(client);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-
-    const handleTokenClick = async (token: string) => {
-        if (!client) return;
-        try {
-            await client.addToken(token);
-            updateDisplay(client);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-
-    const handleRemove = async () => {
-        if (!client) return;
-        try {
-            await client.removeToken();
-            updateDisplay(client);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-    
-    const handleClear = async () => {
-        if (!client) return;
-        try {
-            await client.clearFormula();
-            updateDisplay(client);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
 
     useGameExit(client);
 
@@ -151,18 +61,22 @@ const GamePageSingle: React.FC = () => {
         <Container>
                 <>
                     <Header>
-                        <Title>24 Game</Title>
+                        <Title>24 Game - Singleplayer</Title>
                         <PlayerName>Player: {playerName}</PlayerName>
+                        <GameTimer>
+                            {gameTime}
+                        </GameTimer>
                         <QuitButton onClick={handleLogout}>Quit Game</QuitButton>
                     </Header>
 
                     {winner && (
                         <WinnerDisplay>
-                            <h2>You Solved It!</h2>
-                            <div>Player: {winner}</div>
+                            <h2>Game Solved!</h2>
+                            <div>Winner: {winner}</div>
                             <WinnerFormula>
-                                Winning Formula: {winnerFormula}
+                                Winning Solution: {winnerFormula}
                             </WinnerFormula>
+                            <div>Time: {gameTime}</div>
                         </WinnerDisplay>
                     )}
 

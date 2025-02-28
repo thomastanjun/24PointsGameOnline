@@ -71,7 +71,7 @@ const ModeSelection: React.FC = () => {
     console.log("ModeSelection Player: ", client?.getPlayerName());
     navigate('/rooms', {
        state: { 
-        mode: 'single' } });
+        mode: 'multi' } });
   };
 
   useGameExit(client);
