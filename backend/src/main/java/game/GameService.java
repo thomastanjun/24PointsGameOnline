@@ -45,7 +45,11 @@ public class GameService {
         return availableRooms;
     }
 
-    public String createRoom(boolean isSinglePlayer, int maxPlayers) {
+    public String createRoom(int maxPlayers) {
+        boolean isSinglePlayer = false;
+        if (maxPlayers == 1) {
+            isSinglePlayer = true;
+        }
         String roomId = generateRoomId(isSinglePlayer);
         GamePageManager gameManager = new GamePageManager(this.playerManager, maxPlayers);
         this.gameRooms.put(roomId, gameManager);

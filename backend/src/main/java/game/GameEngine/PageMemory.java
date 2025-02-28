@@ -134,6 +134,7 @@ public class PageMemory {
             String playerName = entry.getKey();
             Cell cell = entry.getValue();
             CellInfo cellContents = new CellInfo(cell.getStringFormula(), String.valueOf(cell.getValue()), cell.getError());
+            System.out.println("PageMemory getGamePageInfo: " + playerName + " " + String.valueOf(cell.getValue()) + " " + cell.getError()); // Debug log
             playersContainer.put(playerName, cellContents);
         }
 

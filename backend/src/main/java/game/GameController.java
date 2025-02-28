@@ -45,7 +45,7 @@ public class GameController {
     public ResponseEntity<String> createRoom(
         @PathVariable int maxPlayers) {
         System.out.println("Creating room..."); // Debug log
-        String roomID = this.gameService.createRoom(true, maxPlayers);
+        String roomID = this.gameService.createRoom(maxPlayers);
         System.out.println("Created room: " + roomID); // Debug log
         return ResponseEntity.ok(roomID);
     }
@@ -176,9 +176,7 @@ public class GameController {
     @GetMapping("/room/{roomID}/state")
     public ResponseEntity<GamePageInfo> getGamePage(
             @PathVariable String roomID) {
-        System.out.println("Fetching..."); // Debug log
         GamePageInfo jsonResponse = this.gameService.getGamePage(roomID);
-        System.out.println("Fetched: " + jsonResponse); // Debug log
         return ResponseEntity.ok(jsonResponse);
     }
             

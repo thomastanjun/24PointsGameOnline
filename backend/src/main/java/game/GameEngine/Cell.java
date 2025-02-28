@@ -37,7 +37,7 @@ public class Cell {
 
     // Getter for the cell's value
     public double getValue() {
-        return value;
+        return this.value;
     }
 
     // Setter for the cell's value
