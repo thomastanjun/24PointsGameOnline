@@ -16,7 +16,6 @@ import game.dto.GameDTOs.RoomInfo;
 import game.dto.GameDTOs.RoomResponse;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/game")
 public class GameController {
     private final GameService gameService;
