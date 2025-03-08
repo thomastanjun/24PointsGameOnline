@@ -96,12 +96,9 @@ public class GameService {
 
     public void removePlayer(String playerName) {
         String roomId = this.playerManager.getPlayerRoom(playerName);
+        System.out.println("Game Service Removing player: " + playerName + " from room: " + roomId);
         if (roomId != null) {
-            GamePageManager room = this.gameRooms.get(roomId);
-            room.removePlayer(playerName);
-            if (room.isEmpty()) {
-                this.gameRooms.remove(roomId);
-            }
+            removePlayerFromRoom(playerName, roomId);
         }
         this.playerManager.removePlayer(playerName);
     }
