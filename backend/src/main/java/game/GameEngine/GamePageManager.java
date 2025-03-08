@@ -10,7 +10,6 @@ import game.dto.GameDTOs.RoomInfo;
 
 public class GamePageManager {
     private PageMemory pageMemory;
-    private PlayerManager playerManager;
     private NumberGenerator numberGenerator;
     private String[] currentGameNumbers;
     private boolean gameState;
@@ -20,7 +19,6 @@ public class GamePageManager {
 
     public GamePageManager(PlayerManager playerManager, int maxPlayers) {
         
-        this.playerManager = playerManager;
         this.numberGenerator = new NumberGenerator();
         this.currentGameNumbers = generateGameNumbers();
         this.gameState = false;
@@ -29,6 +27,10 @@ public class GamePageManager {
         this.pageMemory = new PageMemory(this.currentGameNumbers);
         this.maxPlayers = maxPlayers;
         System.out.println("GamePageManager Created a room with max player:" + maxPlayers); // Debug log
+    }
+
+    public boolean isSinglePlayer() {
+        return this.maxPlayers == 1;
     }
 
     public String[] generateGameNumbers() {

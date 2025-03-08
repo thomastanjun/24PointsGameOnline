@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "FormulaEvaluatorTester",
+            "request": "launch",
+            "mainClass": "test.FormulaEvaluatorTester",
+            "projectName": "game-24points"
+        },
+        {
+            "type": "java",
             "name": "GameApplication",
             "request": "launch",
             "mainClass": "game.GameApplication",

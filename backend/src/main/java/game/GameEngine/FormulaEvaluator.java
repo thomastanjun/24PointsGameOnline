@@ -135,7 +135,7 @@ public class FormulaEvaluator {
 
     private boolean isOperator(String token) {
         return token.equals("+") || token.equals("-") || 
-               token.equals("*") || token.equals("/") ||
-               token.equals("(") || token.equals(")");
+               token.equals("*") || token.equals("/") ;
+               //token.equals("(") || token.equals(")");
     }
 }

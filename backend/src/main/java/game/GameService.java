@@ -16,14 +16,18 @@ import game.dto.GameDTOs.GameStatus;
 import game.dto.GameDTOs.GamePageInfo;
 import game.dto.GameDTOs.RoomInfo;
 
+import game.GameWebSocket.GameUpdateListener;
+
 @Service
 public class GameService {
     private final Map<String, GamePageManager> gameRooms;
     private final PlayerManager playerManager;
+    private GameUpdateListener gameUpdateListener;
 
     public GameService() {
         this.playerManager = new PlayerManager();
         this.gameRooms = new HashMap<>();
+        this.gameUpdateListener = null;
     }
 
     public boolean isPlayerActive(String playerName) {
@@ -66,11 +70,11 @@ public class GameService {
         this.playerManager.addPlayer(playerName);
     }
 
-    public GamePageInfo assignPlayerToRoom(String playerName, String roomId) {
-        System.out.println("Game Service Adding player: " + playerName + " to room: " + roomId);
-        GamePageManager room = this.gameRooms.get(roomId);
+    public GamePageInfo assignPlayerToRoom(String playerName, String roomID) {
+        System.out.println("Game Service Adding player: " + playerName + " to room: " + roomID);
+        GamePageManager room = this.gameRooms.get(roomID);
         if (room == null) {
-            throw new IllegalArgumentException ("Room not found: " + roomId);
+            throw new IllegalArgumentException ("Room not found: " + roomID);
         }
         if (room.isGameRoomFull()) {
             throw new IllegalArgumentException("Room is full");
@@ -80,7 +84,10 @@ public class GameService {
         }
         try {
             room.addPlayer(playerName);
-            this.playerManager.assignPlayerToRoom(playerName, roomId);
+            this.playerManager.assignPlayerToRoom(playerName, roomID);
+            
+            broadcastGamePage(roomID, room.isSinglePlayer());
+            
             return room.pageToJSON();
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to add player: " + playerName +e.getMessage());
@@ -99,29 +106,45 @@ public class GameService {
         this.playerManager.removePlayer(playerName);
     }
 
-    public void removePlayerFromRoom(String playerName, String roomId) {
-        GamePageManager room = this.gameRooms.get(roomId);
+    public void removePlayerFromRoom(String playerName, String roomID) {
+        GamePageManager room = this.gameRooms.get(roomID);
         room.removePlayer(playerName);
         if (room.isEmpty()) {
-            this.gameRooms.remove(roomId);
+            this.gameRooms.remove(roomID);
         }
+
+        broadcastGamePage(roomID, room.isSinglePlayer());
+        
+
     }
 
     public GamePageInfo addToken(String token, String playerName, String roomID) {
         GamePageManager room = this.gameRooms.get(roomID);
         room.addToken(token, playerName);
+
+        broadcastGamePage(roomID, room.isSinglePlayer());
+        
+
         return room.pageToJSON();
     }
 
     public GamePageInfo removeToken(String playerName, String roomID) {
         GamePageManager room = this.gameRooms.get(roomID);
         room.removeToken(playerName);
+
+        broadcastGamePage(roomID, room.isSinglePlayer());
+        
+
         return room.pageToJSON();
     }
 
     public GamePageInfo clearFormula(String playerName, String roomID) {
         GamePageManager room = this.gameRooms.get(roomID);
         room.clearFormula(playerName);
+
+        broadcastGamePage(roomID, room.isSinglePlayer());
+        
+
         return room.pageToJSON();
     }
 
@@ -129,6 +152,9 @@ public class GameService {
     public GamePageInfo startNewGame(String roomID) {
         GamePageManager room = this.gameRooms.get(roomID);
         room.reset();
+
+        broadcastGamePage(roomID, room.isSinglePlayer());
+        
         return room.pageToJSON();
     }
 
@@ -143,5 +169,15 @@ public class GameService {
 
     public int getCurrentPlayersCount() {
         return this.playerManager.getCurrentPlayersCount();
+    }
+
+    public void registerListener(GameUpdateListener listener) {
+        this.gameUpdateListener = listener;
+    }
+
+    private void broadcastGamePage(String roomID, boolean isSinglePlayer) {
+        if (this.gameUpdateListener != null && !isSinglePlayer) {
+            this.gameUpdateListener.onGameUpdate(roomID);
+        }
     }
 }
