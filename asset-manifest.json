@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/24PointsGameOnline/static/css/main.e6c13ad2.css",
-    "main.js": "/24PointsGameOnline/static/js/main.3014dc1b.js",
+    "main.js": "/24PointsGameOnline/static/js/main.b299e7e2.js",
     "static/js/453.d855a71b.chunk.js": "/24PointsGameOnline/static/js/453.d855a71b.chunk.js",
     "index.html": "/24PointsGameOnline/index.html",
     "main.e6c13ad2.css.map": "/24PointsGameOnline/static/css/main.e6c13ad2.css.map",
-    "main.3014dc1b.js.map": "/24PointsGameOnline/static/js/main.3014dc1b.js.map",
+    "main.b299e7e2.js.map": "/24PointsGameOnline/static/js/main.b299e7e2.js.map",
     "453.d855a71b.chunk.js.map": "/24PointsGameOnline/static/js/453.d855a71b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.3014dc1b.js"
+    "static/js/main.b299e7e2.js"
   ]
 }
