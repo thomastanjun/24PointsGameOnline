@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "NumberGenerator",
+            "request": "launch",
+            "mainClass": "game.GameEngine.NumberGenerator",
+            "projectName": "game-24points"
+        },
+        {
+            "type": "java",
             "name": "FormulaEvaluatorTester",
             "request": "launch",
             "mainClass": "test.FormulaEvaluatorTester",

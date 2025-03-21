@@ -1,7 +1,10 @@
 package game.GameEngine;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Random;
 
 import game.dto.GameDTOs.CellInfo;
 import game.dto.GameDTOs.GameStatus;
@@ -16,16 +19,20 @@ public class GamePageManager {
     private String winnerFormula;
     private String winner;
     private int maxPlayers;
+    private List<String> puzzleKeys;
+    private final Random gameRandom;
 
-    public GamePageManager(PlayerManager playerManager, int maxPlayers) {
+    public GamePageManager(PlayerManager playerManager, int maxPlayers, Map<String, String> puzzleSolutions) {
         
         this.numberGenerator = new NumberGenerator();
-        this.currentGameNumbers = generateGameNumbers();
+        this.currentGameNumbers = drawGameNumbers();
         this.gameState = false;
         this.winnerFormula = "";
         this.winner = "";
         this.pageMemory = new PageMemory(this.currentGameNumbers);
         this.maxPlayers = maxPlayers;
+        this.puzzleKeys = new ArrayList<>(puzzleSolutions.keySet());
+        this.gameRandom = new Random();
         System.out.println("GamePageManager Created a room with max player:" + maxPlayers); // Debug log
     }
 
@@ -33,8 +40,12 @@ public class GamePageManager {
         return this.maxPlayers == 1;
     }
 
-    public String[] generateGameNumbers() {
-        return numberGenerator.generateValidNumbers();
+    public String[] drawGameNumbers() {
+        if (this.puzzleKeys.isEmpty()) {
+            throw new IllegalStateException("Puzzle solutions are not loaded");
+        }
+        String gameNumbers = puzzleKeys.get(this.gameRandom.nextInt(this.puzzleKeys.size()));
+        return gameNumbers.split(",");
     }
 
     public String[] getCurrentGameNumbers(){
@@ -138,7 +149,7 @@ public class GamePageManager {
 
     // Method to reset the page memory
     public void reset() {
-        this.currentGameNumbers = generateGameNumbers();
+        this.currentGameNumbers = drawGameNumbers();
         this.pageMemory.reset(this.currentGameNumbers);
         this.gameState = false;
         this.winnerFormula = "";

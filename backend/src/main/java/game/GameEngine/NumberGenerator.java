@@ -1,40 +1,90 @@
 package game.GameEngine;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
+import java.util.Properties;
+import java.util.HashMap;
+import java.io.IOException;
+import java.io.File;
+
 
 public class NumberGenerator {
 
-    private Random random;
+    public static final int UPPER_BOUND = 9;
+    public static final int NUMBER_LIMIT = 4;
+
     private FormulaEvaluator evaluator;
+
+    private record NumberState(String[] numbers, int index) {};
+    private record SolutionState(boolean found, String solution) {};
  
     public NumberGenerator() {
-        this.random = new Random();
         this.evaluator = new FormulaEvaluator();
     }
 
-    // Method to generate a set of 4 numbers that can be combined to make 24
-    public String[] generateValidNumbers() {
-        String[] numbers;
-        do {
-            numbers = generateFourNumbers();
-        } while (!canMake24(numbers));
+    public void saveSolutionFiles(String fileName) {
+        Map<String, String> total_solutions = generateFourNumbers();
+
+        File dataDir = new File("data");
+        if (!dataDir.exists()) {
+            dataDir.mkdir();
+        }
+
+        File outputFile = new File(dataDir, fileName);
         
-        return numbers;
+        Properties properties = new Properties();
+
+        for (Map.Entry<String, String> entry : total_solutions.entrySet()) {
+            properties.setProperty(entry.getKey(), entry.getValue());
+        }
+
+        try (FileOutputStream out = new FileOutputStream(outputFile)){
+            properties.store(out, "24 Game Solutions");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // Method to generate 4 random numbers
-    private String[] generateFourNumbers() {
-        String[] numbers = new String[4];
-        for (int i = 0; i < 4; i++) {
-            numbers[i] = String.valueOf(random.nextInt(9) + 1);  
+    private Map<String, String> generateFourNumbers() {
+
+        Map<String, String> total_solutions = new HashMap<String, String>();
+
+        List<NumberState> frontier = new ArrayList<>();
+
+        for (int i = 1; i < UPPER_BOUND+1; i++) {
+            String[] numbers = new String[NUMBER_LIMIT];
+            numbers[0] = String.valueOf(i);
+            frontier.add(new NumberState(numbers, 0));
         }
-        return numbers;
+
+        while (frontier.size() > 0) {
+            NumberState current = frontier.remove(frontier.size()-1);
+            String[] currentNumbers = current.numbers();
+            int currentIndex = current.index();
+
+            if (currentIndex == NUMBER_LIMIT-1) {
+                SolutionState solution = canMake24(currentNumbers);
+                if (solution.found()) {
+                    String gameNumbers = String.join(",", currentNumbers); 
+                    total_solutions.put(gameNumbers, solution.solution());
+                }
+            } else {
+                for (int i = 1; i < UPPER_BOUND+1; i++) {
+                    String[] newNumbers = currentNumbers.clone();
+                    newNumbers[currentIndex+1] = String.valueOf(i);
+                    frontier.add(new NumberState(newNumbers, currentIndex+1));
+                }
+            }
+        }
+
+        return total_solutions;
     }
 
     // Method to check if the given numbers can be combined to make 24
-    private boolean canMake24(String[] numbers) {
+    private SolutionState canMake24(String[] numbers) {
         List<String[]> permutations = generatePermutations(numbers);
         String[] operators = {"+", "-", "*", "/"};
         
@@ -45,12 +95,12 @@ public class NumberGenerator {
                     evaluator.evaluate(formula.getFormula());
                     System.out.println("Formula: " + formula.getFormula() + " Result: " + evaluator.getResult()); // Debug log
                     if (Math.abs(evaluator.getResult() - 24.0) < 0.0001) {
-                        return true;
+                        return new SolutionState(true, formula.getFormulaString());
                     }
                 }
             }
         }
-        return false;
+        return new SolutionState(false, null);
     }
 
     // Method to generate all possible operator combinations
@@ -126,5 +176,11 @@ public class NumberGenerator {
             }
         }
         return formula;
+    }
+
+    public static void main(String[] args) {
+        NumberGenerator generator = new NumberGenerator();
+        generator.saveSolutionFiles("solutions.properties");
+
     }
 }

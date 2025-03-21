@@ -3,31 +3,65 @@ package game;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Properties;
 import java.util.HashMap;
 import java.util.UUID;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import org.springframework.stereotype.Service;
 
 import game.GameEngine.GamePageManager;
 import game.GameEngine.PlayerManager;
 
-import game.dto.GameDTOs.CellInfo;
-import game.dto.GameDTOs.GameStatus;
 import game.dto.GameDTOs.GamePageInfo;
 import game.dto.GameDTOs.RoomInfo;
-
+import jakarta.annotation.PostConstruct;
 import game.GameWebSocket.GameUpdateListener;
 
 @Service
 public class GameService {
+    
+    private final String SOLUTIONS_FILE_PATH = "data/solutions.properties";
+
     private final Map<String, GamePageManager> gameRooms;
     private final PlayerManager playerManager;
+    private final Map<String, String> puzzleSolutions = new HashMap<>();
     private GameUpdateListener gameUpdateListener;
+
+    @PostConstruct
+    public void init() {
+        loadPuzzleSolutions();
+    }
 
     public GameService() {
         this.playerManager = new PlayerManager();
         this.gameRooms = new HashMap<>();
         this.gameUpdateListener = null;
+    }
+
+    private void loadPuzzleSolutions() {
+
+        File solutionsFile = new File(SOLUTIONS_FILE_PATH);
+
+        if (!solutionsFile.exists() || solutionsFile.length() == 0) {
+            throw new IllegalThreadStateException(
+                "Puzzle file not found or empty at " + solutionsFile.getAbsolutePath() + 
+                ". Application cannot start."
+            );
+        }
+
+        Properties properties = new Properties();
+        try (FileInputStream in = new FileInputStream(solutionsFile)) {
+            properties.load(in);
+            for (String key : properties.stringPropertyNames()) {
+                this.puzzleSolutions.put(key, properties.getProperty(key));
+            }
+            System.out.println("Game Service loaded " + this.puzzleSolutions.size() + "puzzles."); // Debug log
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load puzzle data", e);
+        }
     }
 
     public boolean isPlayerActive(String playerName) {
@@ -55,7 +89,7 @@ public class GameService {
             isSinglePlayer = true;
         }
         String roomId = generateRoomId(isSinglePlayer);
-        GamePageManager gameManager = new GamePageManager(this.playerManager, maxPlayers);
+        GamePageManager gameManager = new GamePageManager(this.playerManager, maxPlayers, this.puzzleSolutions);
         this.gameRooms.put(roomId, gameManager);
         return roomId;
     }
