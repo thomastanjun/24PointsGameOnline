@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.HashMap;
 import java.util.UUID;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import game.GameEngine.GamePageManager;
 import game.GameEngine.PlayerManager;
@@ -23,12 +25,15 @@ import game.GameWebSocket.GameUpdateListener;
 @Service
 public class GameService {
     
-    private final String SOLUTIONS_FILE_PATH = "data/solutions.properties";
+    private final String SOLUTIONS_FILE_PATH = "classpath:data/solutions.properties";
 
     private final Map<String, GamePageManager> gameRooms;
     private final PlayerManager playerManager;
     private final Map<String, String> puzzleSolutions = new HashMap<>();
     private GameUpdateListener gameUpdateListener;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @PostConstruct
     public void init() {
@@ -42,18 +47,17 @@ public class GameService {
     }
 
     private void loadPuzzleSolutions() {
+        Resource resource = resourceLoader.getResource(SOLUTIONS_FILE_PATH);
 
-        File solutionsFile = new File(SOLUTIONS_FILE_PATH);
-
-        if (!solutionsFile.exists() || solutionsFile.length() == 0) {
+        if (!resource.exists()) {
             throw new IllegalThreadStateException(
-                "Puzzle file not found or empty at " + solutionsFile.getAbsolutePath() + 
+                "Puzzle file not found at " + SOLUTIONS_FILE_PATH + 
                 ". Application cannot start."
             );
         }
 
         Properties properties = new Properties();
-        try (FileInputStream in = new FileInputStream(solutionsFile)) {
+        try (InputStream in = resource.getInputStream()) {
             properties.load(in);
             for (String key : properties.stringPropertyNames()) {
                 this.puzzleSolutions.put(key, properties.getProperty(key));
