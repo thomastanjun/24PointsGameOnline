@@ -13,26 +13,25 @@ import game.dto.GameDTOs.RoomInfo;
 
 public class GamePageManager {
     private PageMemory pageMemory;
-    private NumberGenerator numberGenerator;
+    private Map<String, String> puzzles;
     private String[] currentGameNumbers;
     private boolean gameState;
     private String winnerFormula;
     private String winner;
     private int maxPlayers;
-    private List<String> puzzleKeys;
     private final Random gameRandom;
 
     public GamePageManager(PlayerManager playerManager, int maxPlayers, Map<String, String> puzzleSolutions) {
         
-        this.numberGenerator = new NumberGenerator();
         this.currentGameNumbers = drawGameNumbers();
         this.gameState = false;
         this.winnerFormula = "";
         this.winner = "";
         this.pageMemory = new PageMemory(this.currentGameNumbers);
         this.maxPlayers = maxPlayers;
-        this.puzzleKeys = new ArrayList<>(puzzleSolutions.keySet());
+        this.puzzles = puzzleSolutions;
         this.gameRandom = new Random();
+        this.currentGameNumbers = drawGameNumbers();
         System.out.println("GamePageManager Created a room with max player:" + maxPlayers); // Debug log
     }
 
@@ -41,10 +40,11 @@ public class GamePageManager {
     }
 
     public String[] drawGameNumbers() {
-        if (this.puzzleKeys.isEmpty()) {
+        if (this.puzzles == null || this.puzzles.isEmpty()) {
             throw new IllegalStateException("Puzzle solutions are not loaded");
         }
-        String gameNumbers = puzzleKeys.get(this.gameRandom.nextInt(this.puzzleKeys.size()));
+        List<String> keys = new ArrayList<>(this.puzzles.keySet());
+        String gameNumbers = keys.get(this.gameRandom.nextInt(keys.size()));
         return gameNumbers.split(",");
     }
 
