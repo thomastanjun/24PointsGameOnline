@@ -47,7 +47,7 @@ public class NumberGenerator {
         }
     }
 
-    // Method to generate 4 random numbers
+    // Method to generate all possible game numbers and their solutions
     private Map<String, String> generateFourNumbers() {
 
         Map<String, String> total_solutions = new HashMap<String, String>();

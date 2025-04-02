@@ -5,7 +5,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 
 import game.GameService;
-import game.dto.GameDTOs.GamePageInfo;
+import game.data.GameData.GamePageInfo;
 
 @Service
 public class GameWebSocketService implements GameUpdateListener {

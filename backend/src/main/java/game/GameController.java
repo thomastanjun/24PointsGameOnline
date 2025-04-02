@@ -4,16 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
 
-import game.dto.GameDTOs.CellInfo;
-import game.dto.GameDTOs.GameStatus;
-import game.dto.GameDTOs.GamePageInfo;
-import game.dto.GameDTOs.RoomInfo;
-import game.dto.GameDTOs.RoomResponse;
+import game.data.GameData.GamePageInfo;
+import game.data.GameData.RoomInfo;
+import game.data.GameData.RoomResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/game")
@@ -156,16 +152,11 @@ public class GameController {
         try {
             List<RoomInfo> rooms = this.gameService.getAvailableRooms();
             System.out.println("Available rooms: " + rooms); // Debug log
-            RoomResponse response = new RoomResponse();
-            if (rooms.isEmpty()) {
-                response.setStatus("Empty");
-                response.setRoomList(rooms);
-                return ResponseEntity.ok(response);
-            } else {
-                response.setStatus("Available");
-                response.setRoomList(rooms);
-                return ResponseEntity.ok(response);
-            }} catch (Exception e) {
+            
+            String status = rooms.isEmpty() ? "Empty" : "Available";
+            RoomResponse response = new RoomResponse(status, rooms);
+            return ResponseEntity.ok(response);
+            } catch (Exception e) {
                 return ResponseEntity
                     .status(HttpStatus.CONFLICT)
                     .body(new ErrorResponse("No rooms available", "0003"));

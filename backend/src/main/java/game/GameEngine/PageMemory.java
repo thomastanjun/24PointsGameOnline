@@ -1,18 +1,14 @@
 package game.GameEngine;
 
-import game.dto.GameDTOs.CellInfo;
-import game.dto.GameDTOs.GameStatus;
-import game.dto.GameDTOs.GamePageInfo;
-
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import game.data.GameData.CellInfo;
+import game.data.GameData.GamePageInfo;
+import game.data.GameData.GameStatus;
+
 import java.util.HashMap;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-
 
 public class PageMemory {
     private Map<String, Cell> playerCells;

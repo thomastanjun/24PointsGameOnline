@@ -16,11 +16,10 @@ import org.springframework.core.io.ResourceLoader;
 
 import game.GameEngine.GamePageManager;
 import game.GameEngine.PlayerManager;
-
-import game.dto.GameDTOs.GamePageInfo;
-import game.dto.GameDTOs.RoomInfo;
 import jakarta.annotation.PostConstruct;
 import game.GameWebSocket.GameUpdateListener;
+import game.data.GameData.GamePageInfo;
+import game.data.GameData.RoomInfo;
 
 @Service
 public class GameService {
@@ -35,15 +34,15 @@ public class GameService {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @PostConstruct
-    public void init() {
-        loadPuzzleSolutions();
-    }
-
     public GameService() {
         this.playerManager = new PlayerManager();
         this.gameRooms = new HashMap<>();
         this.gameUpdateListener = null;
+    }
+
+    @PostConstruct
+    public void init() {
+        loadPuzzleSolutions();
     }
 
     private void loadPuzzleSolutions() {

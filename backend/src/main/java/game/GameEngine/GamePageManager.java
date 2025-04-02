@@ -2,14 +2,12 @@ package game.GameEngine;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Random;
 
-import game.dto.GameDTOs.CellInfo;
-import game.dto.GameDTOs.GameStatus;
-import game.dto.GameDTOs.GamePageInfo;
-import game.dto.GameDTOs.RoomInfo;
+import game.data.GameData.GamePageInfo;
 
 public class GamePageManager {
     private PageMemory pageMemory;
@@ -23,15 +21,15 @@ public class GamePageManager {
 
     public GamePageManager(PlayerManager playerManager, int maxPlayers, Map<String, String> puzzleSolutions) {
         
-        this.currentGameNumbers = drawGameNumbers();
         this.gameState = false;
         this.winnerFormula = "";
         this.winner = "";
-        this.pageMemory = new PageMemory(this.currentGameNumbers);
         this.maxPlayers = maxPlayers;
         this.puzzles = puzzleSolutions;
         this.gameRandom = new Random();
         this.currentGameNumbers = drawGameNumbers();
+        this.pageMemory = new PageMemory(this.currentGameNumbers);
+        System.out.println("Drawed number:" + this.currentGameNumbers); // Debug log
         System.out.println("GamePageManager Created a room with max player:" + maxPlayers); // Debug log
     }
 
@@ -45,7 +43,9 @@ public class GamePageManager {
         }
         List<String> keys = new ArrayList<>(this.puzzles.keySet());
         String gameNumbers = keys.get(this.gameRandom.nextInt(keys.size()));
-        return gameNumbers.split(",");
+        System.out.println("GamePageManager Drawed number:" + gameNumbers); // Debug log
+        String[] result = gameNumbers.split(",");
+        return result;
     }
 
     public String[] getCurrentGameNumbers(){
